@@ -1,0 +1,341 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[dvipsnames, table]{xcolor}
+\definecolor{linkblue}{rgb}{0.0, 0.2, 0.6}
+\definecolor{linkred}{rgb}{0.7, 0.13, 0.13}
+\usepackage[style=numeric, backend=biber]{biblatex}
+\usepackage{citemsp}
+\usepackage[colorlinks=true, citecolor=linkblue,
+            linkcolor=linkred, urlcolor=linkblue]{hyperref}
+\usepackage{tcolorbox}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{orcidlink}
+\usepackage{fontawesome5}
+\usepackage{titlesec}
+
+% ── Section formatting ────────────────────────────────────────────────────────
+\titleformat{\section}
+  {\Large\sffamily\bfseries\color{black!80}}
+  {\colorbox{black!10}{\makebox[1.2cm]{\thesection}}}
+  {1em}
+  {}
+  [\vspace{-0.3em}{\color{black!20}\rule{\textwidth}{0.5pt}}]
+
+\titleformat{\subsection}
+  {\large\sffamily\bfseries\color{black!70}}
+  {\thesubsection}
+  {1em}
+  {}
+
+% ── Helpers ───────────────────────────────────────────────────────────────────
+\newcommand{\githublink}[1]{\href{https://github.com/#1}{\faGithub}}
+
+% ── Example bibliography ─────────────────────────────────────────────────────
+\begin{filecontents}{refs-citemsp.bib}
+@article{einstein1915,
+  author  = {Einstein, Albert},
+  title   = {Die Feldgleichungen der Gravitation},
+  journal = {Sitzungsberichte der Preussischen Akademie der Wissenschaften},
+  year    = {1915},
+  pages   = {844--847}
+}
+@book{wald1984,
+  author    = {Wald, Robert M.},
+  title     = {General Relativity},
+  publisher = {University of Chicago Press},
+  year      = {1984}
+}
+@article{hawking1974,
+  author  = {Hawking, Stephen W.},
+  title   = {Black hole explosions?},
+  journal = {Nature},
+  volume  = {248},
+  pages   = {30--31},
+  year    = {1974}
+}
+@book{mtw1973,
+  author    = {Misner, Charles W. and Thorne, Kip S. and Wheeler, John Archibald},
+  title     = {Gravitation},
+  publisher = {W. H. Freeman},
+  year      = {1973}
+}
+\end{filecontents}
+\addbibresource{refs-citemsp.bib}
+
+% ── Title ─────────────────────────────────────────────────────────────────────
+\title{Draft: \textbf{\texttt{citemsp}: Citation Locators for \LaTeX}}
+
+\author{Apostolos Tsampodimos%
+  \,\,\githublink{atsampodimos/citemsp}%
+  \,\,\orcidlink{0009-0001-0230-5647}}
+\affil{Center for Physical Sciences and Technology\\
+  Saul\.etekio~3, 10257 Vilnius, Lithuania\\
+  \texttt{apostolos.tsampodimos@ftmc.lt}}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+I present \texttt{citemsp}, a \LaTeX{} package extension of \texttt{biblatex} with per-key locators rendered as compact superscript/subscript pairs on numeric citation labels\footnote{The package is available at \url{https://github.com/apostolostsampodimos/citemsp} and on CTAN.}. The default locators are section~(\S) and paragraph~(\P), while an extensible prefix registry provides additional types -- the user can register custom prefixes with \texttt{\textbackslash citemspprefix}. The package requires no external dependencies beyond \texttt{biblatex}, \texttt{graphicx}, and \texttt{amssymb}.
+\end{abstract}
+
+
+\section{Syntax and Usage}
+
+The \texttt{\textbackslash citemsp} command embeds precise locators directly in multi-source citations. It accepts section~(\S) and paragraph~(\P) locators by default, plus seven built-in prefix types -- equation~(eq.), box~($\square$), definition~($\triangleq$), figure~($\boxdot$), footnote~($\dagger$), page~(pp.), and table~($\boxplus$) -- via a slash-delimited syntax with single-letter prefixes.
+
+The command accepts a comma-separated list of citation keys with optional locators using forward-slash delimiters. By default, the first slot renders as \S\ (section) and the second as \P\ (paragraph). A single-letter prefix changes the locator type:
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{tabular*}{\dimexpr\linewidth-0pt}{@{}l@{\extracolsep{\fill}}c@{\quad}l@{}}
+\texttt{\textbackslash citemsp\{key\}}                    & $\longrightarrow$ & \citemsp{wald1984}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section\}}             & $\longrightarrow$ & \citemsp{wald1984/6.2}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section/paragraph\}}   & $\longrightarrow$ & \citemsp{wald1984/6.2/3}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section/e4.3\}}        & $\longrightarrow$ & \citemsp{wald1984/6.2/e4.3}\\[3pt]
+\texttt{\textbackslash citemsp\{key/b21.1\}}               & $\longrightarrow$ & \citemsp{mtw1973/b21.1}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section/b8.1\}}        & $\longrightarrow$ & \citemsp{mtw1973/8.4/b8.1}
+\end{tabular*}
+\end{tcolorbox}
+
+\noindent The seven built-in prefixes are listed in Table~\ref{tab:prefixes}, and the user can register custom prefixes with \texttt{\textbackslash citemspprefix\{letter\}\{label\}}.
+
+\begin{table}[h]
+\centering
+\rowcolors{2}{blue!3}{white}
+\begin{tabular}{c l l l}
+\toprule
+\rowcolor{blue!15}
+\textbf{Prefix} & \textbf{Locator} & \textbf{Render} & \textbf{Output} \\
+\midrule
+\texttt{b} & Box         & $\square$     & \citemsp{mtw1973/b21.1} \\
+\texttt{d} & Definition  & $\triangleq$  & \citemsp{wald1984/3.2/d5} \\
+\texttt{e} & Equation    & eq.           & \citemsp{wald1984/6.2/e4.3} \\
+\texttt{f} & Figure      & $\boxdot$     & \citemsp{wald1984/6.1/f3} \\
+\texttt{n} & Footnote    & $\dagger$     & \citemsp{hawking1974/1/n7} \\
+\texttt{p} & Page        & pp.           & \citemsp{wald1984/p42} \\
+\texttt{t} & Table       & $\boxplus$    & \citemsp{mtw1973/8.4/t2} \\
+\bottomrule
+\end{tabular}
+\caption{Registry: each single-letter prefix maps to a typographical symbol rendered before the locator number.}
+\label{tab:prefixes}
+\end{table}
+
+
+\section{Examples}
+
+\subsection{Single Source}
+
+For a single reference with precise location:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The Schwarzschild metric~\citemsp{wald1984/6.1/2} describes
+spherically symmetric vacuum solutions.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The Schwarzschild metric~\citemsp{wald1984/6.1/2} describes spherically symmetric vacuum solutions.
+
+
+\subsection{Multiple Sources}
+
+For claims requiring verification across multiple independent sources:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+Black hole thermodynamics~\citemsp{hawking1974/1/2, wald1984/12.5/1}
+establishes a deep connection between gravity and quantum mechanics.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} Black hole thermodynamics~\citemsp{hawking1974/1/2, wald1984/12.5/1} establishes a deep connection between gravity and quantum mechanics.
+
+
+\subsection{Partial Locators}
+
+Not all entries require full locators:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+General covariance~\citemsp{einstein1915, wald1984/4, hawking1974/1/2}
+forms the foundation of general relativity.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} General covariance~\citemsp{einstein1915, wald1984/4, hawking1974/1/2} forms the foundation of general relativity.
+
+
+\subsection{Equation Locator}
+
+Use the \texttt{e} prefix to reference a specific equation:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The field equations~\citemsp{wald1984/3.2/e4.3} can be derived
+from a variational principle.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The field equations~\citemsp{wald1984/3.2/e4.3} can be derived from a variational principle.
+
+
+\subsection{Box Locator}
+
+Use the \texttt{b} prefix for box environments, as used extensively in Misner, Thorne \& Wheeler's \textit{Gravitation}~\cite{mtw1973}:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The stress-energy tensor~\citemsp{mtw1973/b21.1} is discussed
+in a self-contained box.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The stress-energy tensor~\citemsp{mtw1973/b21.1} is discussed in a self-contained box.
+
+
+\subsection{Definition Locator}
+
+Use the \texttt{d} prefix to reference a specific definition:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+A globally hyperbolic spacetime~\citemsp{wald1984/8.1/d3}
+satisfies strong causality with compact causal diamonds.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} A globally hyperbolic spacetime~\citemsp{wald1984/8.1/d3} satisfies strong causality with compact causal diamonds.
+
+
+\subsection{Figure Locator}
+
+Use the \texttt{f} prefix to point the reader to a specific figure:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The Penrose diagram~\citemsp{hawking1974/1/f2} illustrates
+the causal structure near the event horizon.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The Penrose diagram~\citemsp{hawking1974/1/f2} illustrates the causal structure near the event horizon.
+
+
+\subsection{Footnote Locator}
+
+Use the \texttt{n} prefix to cite a specific footnote in the source:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The sign convention is clarified in a
+footnote~\citemsp{wald1984/3.4/n2}.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The sign convention is clarified in a footnote~\citemsp{wald1984/3.4/n2}.
+
+
+\subsection{Page Locator}
+
+Use the \texttt{p} prefix to reference a specific page:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The ADM formalism~\citemsp{mtw1973/p520} decomposes
+spacetime into spatial hypersurfaces.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The ADM formalism~\citemsp{mtw1973/p520} decomposes spacetime into spatial hypersurfaces.
+
+
+\subsection{Table Locator}
+
+Use the \texttt{t} prefix to reference a specific table:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The Petrov classification~\citemsp{wald1984/7.3/t1} organises
+the Weyl tensor into algebraic types.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The Petrov classification~\citemsp{wald1984/7.3/t1} organises the Weyl tensor into algebraic types.
+
+
+\subsection{Mixed Locator Types}
+
+All locator types can be freely mixed in a single call:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+See~\citemsp{wald1984/6.1/2, mtw1973/b21.1, hawking1974/1/e4.3}
+for further details.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} See~\citemsp{wald1984/6.1/2, mtw1973/b21.1, hawking1974/1/e4.3} for further details.
+
+
+\subsection{Custom Prefixes}
+
+Users can register new prefix types with \texttt{\textbackslash citemspprefix}. For example, a cosmology paper might define a prefix for ``window function'' references:
+
+\citemspprefix{w}{w.}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\citemspprefix{w}{w.}
+The top-hat window~\citemsp{wald1984/4.2/w3} is
+the simplest smoothing kernel.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The top-hat window~\citemsp{wald1984/4.2/w3} is the simplest smoothing kernel.
+
+\medskip
+\noindent Similarly, a prefix for axioms can use a math symbol:
+
+\citemspprefix{a}{\ensuremath{\vdash}}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\citemspprefix{a}{\ensuremath{\vdash}}
+The equivalence principle~\citemsp{mtw1973/16.4/a2}
+underpins all metric theories of gravity.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The equivalence principle~\citemsp{mtw1973/16.4/a2} underpins all metric theories of gravity.
+
+
+\section{Relation to Biblatex}
+
+The standard \texttt{biblatex} provides locators via its postnote mechanism (e.g., \verb|\autocite[§3.2]{wald1984}|), but \texttt{\textbackslash citemsp} provides a compact way of guiding the reader to the precise location within the cited work, directly in the running text.
+
+
+\section{Implementation}
+
+\begin{enumerate}
+  \item \textbf{Locator scaling.} \texttt{\textbackslash citemspscale} (default~0.35) and \texttt{\textbackslash citesize} control the size of locator glyphs via \texttt{\textbackslash scalebox} from \texttt{graphicx}.
+
+  \item \textbf{Citation rendering.} A custom \texttt{biblatex} cite command, \texttt{\textbackslash citelinksp}, declared via \texttt{\textbackslash DeclareCiteCommand}, prints the hyperlinked citation number and conditionally attaches superscript/subscript locators through the dispatcher. When \texttt{hyperref} draws bordered link boxes (\texttt{colorlinks=false}), a horizontal kern prevents overlap.
+
+  \item \textbf{Entry parsing.} The user-facing \texttt{\textbackslash citemsp} uses \texttt{\textbackslash forcsvlist} to iterate over comma-separated entries. Each entry is split at forward slashes using a delimited \texttt{\textbackslash def} pattern, extracting the citation key and up to two locator slots before passing them to the renderer.
+\end{enumerate}
+
+
+
+\printbibliography
+
+\end{document}
