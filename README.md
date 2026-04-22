@@ -29,6 +29,22 @@ A LaTeX package extending `biblatex` with per-key citation locators rendered as 
 
 Custom prefixes can be registered with `\citemspprefix{letter}{label}`.
 
+## Repository structure
+
+```
+├── ctan/               CTAN upload material
+│   ├── citemsp.sty         Package source (v2.1)
+│   ├── citemsp-doc.tex     Package documentation source
+│   └── citemsp-doc.pdf     Compiled documentation
+│
+├── paper/              arXiv paper
+│   ├── citemsp-paper.tex   Paper source
+│   ├── citemsp-paper.pdf   Compiled paper
+│   └── citemsp.sty         Package copy (for self-contained build)
+│
+└── LICENSE             LPPL 1.3c
+```
+
 ## License
 
 LPPL 1.3c — see [LICENSE](LICENSE).
