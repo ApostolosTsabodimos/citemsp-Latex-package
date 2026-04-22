@@ -1,7 +1,7 @@
 %%
 %% citemsp-doc.tex — Documentation for the citemsp package
 %%
-%% Copyright (c) 2025 Apostolos Tsampodimos
+%% Copyright (c) 2026 Apostolos Tsampodimos
 %% LPPL 1.3c — see LICENSE for details
 %%
 \documentclass[11pt, a4paper]{article}
@@ -25,7 +25,7 @@
 \usepackage{enumitem}
 
 % ── Helpers ───────────────────────────────────────────────────────────────────
-\newcommand{\githublink}[1]{\href{https://github.com/#1}{\faGithub}}
+\newcommand{\githublink}[1]{\href{https://github.com/ApostolosTsabodimos/citemsp-Latex-package}{\faGithub}}
 \newcommand{\pkg}[1]{\texttt{#1}}
 \newcommand{\cmd}[1]{\texttt{\textbackslash #1}}
 
@@ -64,12 +64,20 @@
 % ── Title ─────────────────────────────────────────────────────────────────────
 \title{\textbf{The \pkg{citemsp} Package}\\[4pt]
   \large Per-Key Citation Locators for Biblatex\\[4pt]
-  \normalsize v2.1 — 2025/04/21}
+  \normalsize v2.1 — \today}
 
-\author{Apostolos Tsampodimos\,\,\githublink{atsampodimos/citemsp}\,\,\orcidlink{0009-0001-0230-5647}}
+\author{Apostolos Tsampodimos\,\,\githublink{https://github.com/ApostolosTsabodimos/citemsp-Latex-package}\,\,\orcidlink{0009-0001-0230-5647}}
 \affil{Center for Physical Sciences and Technology\\
 Saul\.etekio~3, 10257 Vilnius, Lithuania\\
 \texttt{apostolos.tsampodimos@ftmc.lt}}
+
+%\author{Agnese Mariotti\,\,\githublink{}\,\,\orcidlink{}}
+%\affil{
+%\texttt{}}
+
+%\author{Nathaniel Sherrill\,\,\githublink{}\,\,\orcidlink{}}
+%\affil{
+%\texttt{}}
 
 \date{}
 
@@ -96,15 +104,14 @@ The \pkg{biblatex} package offers a locator interface through its postnote field
 \end{verbatim}
 \end{tcolorbox}
 %
-\noindent This approach has two limitations:
+\noindent This approach has two limitations when writing a scientific paper:
 
 \begin{enumerate}[leftmargin=2em]
-  \item \textbf{No stacked locators.} There is no built-in way to show both a section \emph{and} a paragraph locator for the same key in a single compact glyph. One must choose one or resort to verbose free text like ``§3.2, ¶5''.
   \item \textbf{Verbose syntax.} Citing three sources with locators requires nested optional arguments, which is cumbersome in source files.
-  \item \textbf{No typed locators.} There is no compact notation for referencing specific equations, boxes, figures, tables, definitions, footnotes, or pages within a cited work.
+  \item \textbf{No typed locators.} There is no compact notation for referencing specific sections, paragraphs equations, figures etc.
 \end{enumerate}
 
-\noindent The \pkg{citemsp} package addresses all three: it renders locators as a superscript/subscript pair attached to the citation number, supports section and paragraph locators by default plus seven additional types via an extensible prefix registry, and accepts all keys with their locators in a single comma-separated argument.
+\noindent The \pkg{citemsp} package renders locators as a superscript/subscript pair attached to the citation number, supports section and paragraph locators by default plus seven additional types via an extensible prefix registry, and accepts all keys with their locators in a single comma-separated argument. It also allows for the user to define their own personal locators.
 
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -141,7 +148,7 @@ The package must be loaded \emph{after} \pkg{biblatex}:
 \end{verbatim}
 \end{tcolorbox}
 %
-\noindent Loading \pkg{citemsp} before \pkg{biblatex} produces a package error.
+\noindent Loading \pkg{citemsp} before \pkg{biblatex} will produce a package error.
 
 
 \subsection{Syntax}
@@ -149,16 +156,41 @@ The package must be loaded \emph{after} \pkg{biblatex}:
 The \cmd{citemsp} command accepts a comma-separated list of entries.  Each entry has the form \texttt{key}, \texttt{key/loc1}, or \texttt{key/loc1/loc2}. By default, the first slot renders as \S\ (section) and the second as \P\ (paragraph). A single-letter prefix changes the locator type:
 
 \begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
-\texttt{\textbackslash citemsp\{key\}} \hfill $\rightarrow$ \citemsp{wald1984}\\[3pt]
-\texttt{\textbackslash citemsp\{key/section\}} \hfill $\rightarrow$ \citemsp{wald1984/6.2}\\[3pt]
-\texttt{\textbackslash citemsp\{key/section/paragraph\}} \hfill $\rightarrow$ \citemsp{wald1984/6.2/3}\\[3pt]
-\texttt{\textbackslash citemsp\{key/section/e4.3\}} \hfill $\rightarrow$ \citemsp{wald1984/6.2/e4.3}\\[3pt]
-\texttt{\textbackslash citemsp\{key/b21.1\}} \hfill $\rightarrow$ \citemsp{mtw1973/b21.1}\\[3pt]
-\texttt{\textbackslash citemsp\{key/section/b8.1\}} \hfill $\rightarrow$ \citemsp{mtw1973/8.4/b8.1}
+\begin{tabular*}{\dimexpr\linewidth-0pt}{@{}l@{\extracolsep{\fill}}c@{\quad}l@{}}
+\texttt{\textbackslash citemsp\{key\}}                    & $\longrightarrow$ & \citemsp{wald1984}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section\}}             & $\longrightarrow$ & \citemsp{wald1984/6.2}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section/paragraph\}}   & $\longrightarrow$ & \citemsp{wald1984/6.2/3}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section/e4.3\}}        & $\longrightarrow$ & \citemsp{wald1984/6.2/e4.3}\\[3pt]
+\texttt{\textbackslash citemsp\{key/b21.1\}}               & $\longrightarrow$ & \citemsp{mtw1973/b21.1}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section/b8.1\}}        & $\longrightarrow$ & \citemsp{mtw1973/8.4/b8.1}
+\end{tabular*}
 \end{tcolorbox}
 
-\noindent The built-in prefixes are: \texttt{b}~for box~($\square$), \texttt{d}~for definition~($\triangleq$), \texttt{e}~for equation~(eq.), \texttt{f}~for figure~($\boxdot$), \texttt{n}~for footnote~($\dagger$), \texttt{p}~for page~(pp.), and \texttt{t}~for table~($\boxplus$). No prefix defaults to \S\ or \P\ depending on slot position. When both locators are present, the first appears as a superscript and the second as a subscript. Users can register custom prefixes with \cmd{citemspprefix}:
+\noindent The built-in prefixes are: \texttt{b}~for box~($\square$), \texttt{d}~for definition~($\triangleq$), \texttt{e}~for equation~(eq.), \texttt{f}~for figure~($\boxdot$), \texttt{n}~for footnote~($\dagger$), \texttt{p}~for page~(pp.), and \texttt{t}~for table~($\boxplus$). No prefix defaults to \S\ or \P\ depending on slot position. When both locators are present, the first appears as a superscript and the second as a subscript. All are found in the following table:
+
+\begin{table}[h]
+\centering
+\rowcolors{2}{blue!3}{white}
+\begin{tabular}{c l l l}
+\toprule
+\rowcolor{blue!15}
+\textbf{Prefix} & \textbf{Locator} & \textbf{Render} & \textbf{Output} \\
+\midrule
+\texttt{b} & Box         & $\square$     & \citemsp{mtw1973/b21.1} \\
+\texttt{d} & Definition  & $\triangleq$  & \citemsp{wald1984/3.2/d5} \\
+\texttt{e} & Equation    & eq.           & \citemsp{wald1984/6.2/e4.3} \\
+\texttt{f} & Figure      & $\boxdot$     & \citemsp{wald1984/6.1/f3} \\
+\texttt{n} & Footnote    & $\dagger$     & \citemsp{hawking1974/1/n7} \\
+\texttt{p} & Page        & pp.           & \citemsp{wald1984/p42} \\
+\texttt{t} & Table       & $\boxplus$    & \citemsp{mtw1973/8.4/t2} \\
+\bottomrule
+\end{tabular}
+\caption{Registry: each single-letter prefix maps to a typographical symbol rendered before the locator number.}
+\label{tab:prefixes}
+\end{table}
+
 %
+Users can register custom prefixes with \cmd{citemspprefix}:
 \begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
 \begin{verbatim}
 \citemspprefix{w}{w.}   % register "w" prefix rendering as "w."
@@ -181,33 +213,33 @@ The locator glyph size is controlled by \cmd{citemspscale} (default~0.35). Redef
 \section{Comparison with Standard Biblatex}
 % ══════════════════════════════════════════════════════════════════════════════
 
-\begin{table}[ht]
-\centering
-\rowcolors{2}{blue!3}{white}
-\begin{tabular}{>{\raggedright\arraybackslash}p{0.46\textwidth} >{\raggedright\arraybackslash}p{0.46\textwidth}}
-\toprule
-\rowcolor{blue!15}
-\textbf{Standard biblatex} & \textbf{citemsp} \\
-\midrule
-\verb|\autocite[§3.2]{wald1984}| produces ``[1, §3.2]'' --- locator follows the number as free text &
-\verb|\citemsp{wald1984/3.2}| produces \citemsp{wald1984/3.2} --- locator attached as compact glyph \\[6pt]
+%\begin{table}[ht]
+%\centering
+%\rowcolors{2}{blue!3}{white}
+%\begin{tabular}{>{\raggedright\arraybackslash}p{0.46\textwidth} >{\raggedright\arraybackslash}p{0.%46\textwidth}}
+%\toprule
+%\rowcolor{blue!15}
+%\textbf{Standard biblatex} & \textbf{citemsp} \\
+%\midrule
+%&
+% \\[6pt]
 
-No built-in stacked section + paragraph &
-\verb|\citemsp{wald1984/3.2/5}| produces \citemsp{wald1984/3.2/5} with both \\[6pt]
+%&
+% \\[6pt]
 
-Multi-cite needs \verb|\autocites| with repeated optional arguments &
-Single command: \verb|\citemsp{k1/s1/p1, k2/s2}| \\[6pt]
+%&
+% \\[6pt]
 
-No typed locators &
-Seven built-in prefixes: \texttt{b}~($\square$), \texttt{d}~($\triangleq$), \texttt{e}~(eq.), \texttt{f}~($\boxdot$), \texttt{n}~($\dagger$), \texttt{p}~(pp.), \texttt{t}~($\boxplus$); extensible via \cmd{citemspprefix} \\[6pt]
+%&
+% \\[6pt]
 
-Postnote applies after last key only (in \verb|\cite|) &
-Each key carries independent locators \\
-\bottomrule
-\end{tabular}
-\caption{Feature comparison between standard \pkg{biblatex} locators and \pkg{citemsp}.}
-\label{tab:comparison}
-\end{table}
+%&
+% \\
+%\bottomrule
+%\end{tabular}
+%\caption{Feature comparison between standard \pkg{biblatex} locators and \pkg{citemsp}.}
+%\label{tab:comparison}
+%\end{table}
 
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -320,14 +352,11 @@ The prefix registry provides seven built-in types beyond the default \S/\P:
 \section{Implementation}
 % ══════════════════════════════════════════════════════════════════════════════
 
-The package (\textasciitilde80 lines) consists of four components:
 
 \begin{enumerate}[leftmargin=2em]
   \item \textbf{Locator scaling.} \cmd{citemspscale} (default~0.35) and \cmd{citesize} control the size of locator glyphs via \cmd{scalebox} from \pkg{graphicx}.
 
-  \item \textbf{Prefix registry.} An extensible dispatch mechanism based on \verb|\ifcsname|/\verb|\csname| (e-TeX). Seven built-in prefixes are registered: \texttt{b}~($\square$), \texttt{d}~($\triangleq$), \texttt{e}~(eq.), \texttt{f}~($\boxdot$), \texttt{n}~($\dagger$), \texttt{p}~(pp.), \texttt{t}~($\boxplus$). Users can add custom prefixes with \cmd{citemspprefix}\texttt{\{letter\}\{label\}}. Unrecognised first characters fall back to the slot default (\S\ or \P).
-
-  \item \textbf{Citation rendering.} A custom biblatex cite command, \cmd{citelinksp}, declared via \verb|\DeclareCiteCommand|, prints the hyperlinked citation number and conditionally attaches superscript/subscript locators through the dispatcher. In italic contexts, additional math kerns align the locators with the slanted axis. When \pkg{hyperref} draws bordered link boxes (\texttt{colorlinks=false}), a horizontal kern prevents overlap.
+  \item \textbf{Citation rendering.} A custom biblatex cite command, \cmd{citelinksp}, declared via \verb|\DeclareCiteCommand|, prints the hyperlinked citation number and conditionally attaches superscript/subscript locators through the dispatcher. When \pkg{hyperref} draws bordered link boxes (\texttt{colorlinks=false}), a horizontal kern prevents overlap.
 
   \item \textbf{Entry parsing.} The user-facing \cmd{citemsp} uses \verb|\forcsvlist| (from \pkg{etoolbox}, loaded by \pkg{biblatex}) to iterate over comma-separated entries. Each entry is split at forward slashes using a delimited \verb|\def| pattern, extracting the key and up to two locator slots before calling the renderer.
 \end{enumerate}
@@ -340,7 +369,7 @@ The package (\textasciitilde80 lines) consists of four components:
 \begin{itemize}[leftmargin=2em]
   \item \textbf{Section numbering:} use the source's native format (e.g., 3.2.1, IV, A.1).
   \item \textbf{Paragraph counting:} count paragraphs from the start of the referenced section.
-  \item \textbf{Prefix locators:} use a single-letter prefix for typed locators: \texttt{b}~(box), \texttt{d}~(definition), \texttt{e}~(equation), \texttt{f}~(figure), \texttt{n}~(footnote), \texttt{p}~(page), \texttt{t}~(table). E.g., \texttt{key/3.2/e4.3} for an equation, \texttt{key/b21.1} for a box.
+  \item \textbf{Prefix locators:} ideally use a single-letter prefix for typed locators: \texttt{b}~(box), \texttt{d}~(definition), \texttt{e}~(equation), \texttt{f}~(figure), \texttt{n}~(footnote), \texttt{p}~(page), \texttt{t}~(table). E.g., \texttt{key/3.2/e4.3} for an equation, \texttt{key/b21.1} for a box.
   \item \textbf{Subsection references:} use the full path (e.g., \texttt{key/3.2.1}), not a relative number.
   \item \textbf{Plain citations:} \verb|\citemsp{key}| with no slashes produces a standard numeric citation, so the command can replace \verb|\cite| if desired.
 \end{itemize}
