@@ -1,30 +1,25 @@
-%%
-%% citemsp.sty — Per-key citation locators for biblatex
-%%
-%% Copyright (c) 2025 Apostolos Tsampodimos
-%%
-%% This work may be distributed and/or modified under the conditions of
-%% the LaTeX Project Public License, version 1.3c or later:
-%%   https://www.latex-project.org/lppl/lppl-1-3c/
-%%
-%% This work has the LPPL maintenance status "maintained".
-%% The Current Maintainer of this work is Apostolos Tsampodimos.
-%%
-%% This work consists of the files citemsp.sty and citemsp-doc.tex.
-%%
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{citemsp}[2025/04/21 v2.1 Per-key citation locators for biblatex]
+\ProvidesPackage{citemsp}[2026/04/28 v2.2 Per-key citation locators (biblatex or natbib)]
 
-% ── Dependencies ──────────────────────────────────────────────────────────────
-\@ifpackageloaded{biblatex}{}{%
-  \PackageError{citemsp}
-    {The biblatex package must be loaded before citemsp}
-    {Load biblatex with \string\usepackage[...]{biblatex} before
-     \string\usepackage{citemsp}.}%
-}
+% ── Backend detection ────────────────────────────────────────────────────────
+%  citemsp can sit on top of either biblatex or natbib. Whichever is loaded
+%  first wins; if both are loaded (which itself would be an error), biblatex
+%  is preferred.
+\newif\if@citesp@biblatex
+\newif\if@citesp@natbib
+\@ifpackageloaded{biblatex}
+  {\@citesp@biblatextrue}
+  {\@ifpackageloaded{natbib}
+     {\@citesp@natbibtrue}
+     {\PackageError{citemsp}
+        {Either biblatex or natbib must be loaded before citemsp}
+        {Load \string\usepackage{biblatex} or \string\usepackage{natbib}
+         (or use a class such as revtex4-2 that loads natbib automatically)
+         before \string\usepackage{citemsp}.}}}
 
 \RequirePackage{graphicx}   % \scalebox
 \RequirePackage{amssymb}    % \square (□ glyph for box locators)
+\RequirePackage{etoolbox}   % \forcsvlist (biblatex pulls it; natbib does not)
 
 % ── User-configurable sizing ──────────────────────────────────────────────────
 \newcommand{\citemspscale}{0.35}
@@ -35,28 +30,32 @@
 \newcommand{\@citesp@par}{}
 \def\@citesp@itshape{it}%
 
-% ── Hyperref-aware spacing ────────────────────────────────────────────────────
+% ── Hyperref-aware spacing and link wrapper ──────────────────────────────────
+%  \@citesp@hrefkern : tiny kern after the bracketed number when hyperref is
+%                     loaded without colorlinks (so the bracket doesn't kiss
+%                     the locator subscript).
+%  \@citesp@linkwrap : on the natbib path, wraps the printed number in a
+%                     hyperref jump to the bibliography entry. On the biblatex
+%                     path, biblatex's own \bibhyperref is used instead, so
+%                     this stays as identity.
 \def\@citesp@hrefkern{}
+\def\@citesp@linkwrap#1#2{#2}
 \AtBeginDocument{%
   \@ifpackageloaded{hyperref}{%
     \ifHy@colorlinks\else
       \def\@citesp@hrefkern{\kern1.5pt}%
     \fi
+    \if@citesp@natbib
+      \def\@citesp@linkwrap#1#2{\hyperlink{cite.#1}{#2}}%
+    \fi
   }{}%
 }
 
 % ── Prefix registry ──────────────────────────────────────────────────────────
-%  Maps a single-letter prefix to a rendered label.
-%  Default (no recognized prefix): § for superscript slot, ¶ for subscript.
-%
-%  User command:  \citemspprefix{<letter>}{<label>}
-%  Example:       \citemspprefix{w}{w.}   % register "w" for "widget"
-%
 \newcommand{\citemspprefix}[2]{%
   \expandafter\def\csname @citesp@pfx@#1\endcsname{#2}%
 }
 
-% ── Built-in prefixes ────────────────────────────────────────────────────────
 \citemspprefix{b}{\ensuremath{\square}}%            box         □<num>
 \citemspprefix{d}{\ensuremath{\triangleq}}%         definition  ≜<num>
 \citemspprefix{e}{eq.}%                              equation    eq.<num>
@@ -66,9 +65,6 @@
 \citemspprefix{t}{\ensuremath{\boxplus}}%           table       ⊞<num>
 
 % ── Locator type dispatch ─────────────────────────────────────────────────────
-%  \@citesp@renderloc{value}{default-symbol}
-%  Checks first character against the prefix registry.
-%
 \def\@citesp@renderloc#1#2{%
   \expandafter\@citesp@dispatchloc#1\@citesp@end{#2}%
 }
@@ -80,41 +76,51 @@
   \fi
 }
 
-% ── Core cite command ─────────────────────────────────────────────────────────
-\DeclareCiteCommand{\citelinksp}
-  {}
-  {%
-    \bibhyperref{\printfield{labelnumber}}%
-    % Adjust kerning when the surrounding text is italic
-    \ifx\f@shape\@citesp@itshape
-      \def\@citesp@supkern{\mkern2mu}%
-      \def\@citesp@subkern{\mkern-1mu}%
-    \else
-      \def\@citesp@supkern{}%
-      \def\@citesp@subkern{}%
-    \fi
-    % Render locators: dispatched by prefix
-    \ifx\@citesp@sec\empty
-      \ifx\@citesp@par\empty\else
-        \@citesp@hrefkern
-        $\mbox{}_{\@citesp@subkern\citesize{\@citesp@renderloc{\@citesp@par}{\P}}}$%
-      \fi
-    \else
+% ── Locator-rendering body (backend-independent) ─────────────────────────────
+%  Emits the super/subscript locator pair for the current \@citesp@sec /
+%  \@citesp@par. Called immediately after the citation number is printed.
+\newcommand{\@citesp@renderlocators}{%
+  \ifx\f@shape\@citesp@itshape
+    \def\@citesp@supkern{\mkern2mu}%
+    \def\@citesp@subkern{\mkern-1mu}%
+  \else
+    \def\@citesp@supkern{}%
+    \def\@citesp@subkern{}%
+  \fi
+  \ifx\@citesp@sec\empty
+    \ifx\@citesp@par\empty\else
       \@citesp@hrefkern
-      \ifx\@citesp@par\empty
-        \raisebox{1.5pt}{$\mbox{}^{\@citesp@supkern\citesize{\@citesp@renderloc{\@citesp@sec}{\S}}}$}%
-      \else
-        \raisebox{1.5pt}{$\mbox{}^{\@citesp@supkern\citesize{\@citesp@renderloc{\@citesp@sec}{\S}}}_{\@citesp@subkern\citesize{\@citesp@renderloc{\@citesp@par}{\P}}}$}%
-      \fi
+      \ensuremath{\mbox{}_{\@citesp@subkern\citesize{\@citesp@renderloc{\@citesp@par}{\textparagraph}}}}%
     \fi
+  \else
+    \@citesp@hrefkern
+    \ifx\@citesp@par\empty
+      \raisebox{1.5pt}{\ensuremath{\mbox{}^{\@citesp@supkern\citesize{\@citesp@renderloc{\@citesp@sec}{\textsection}}}}}%
+    \else
+      \raisebox{1.5pt}{\ensuremath{\mbox{}^{\@citesp@supkern\citesize{\@citesp@renderloc{\@citesp@sec}{\textsection}}}_{\@citesp@subkern\citesize{\@citesp@renderloc{\@citesp@par}{\textparagraph}}}}}%
+    \fi
+  \fi
+}
+
+% ── Backend-specific cite command ────────────────────────────────────────────
+%  \citelinksp{<single-key>} prints the citation number (linked) followed by
+%  the locator super/subscripts. The list-and-bracket handling lives in
+%  \citemsp below; here we only handle one key.
+\if@citesp@biblatex
+  \DeclareCiteCommand{\citelinksp}
+    {}
+    {\bibhyperref{\printfield{labelnumber}}\@citesp@renderlocators}
+    {}
+    {}
+\else
+  \newcommand{\citelinksp}[1]{%
+    \@citesp@linkwrap{#1}{\citenum{#1}}%
+    \@citesp@renderlocators
   }
-  {,\,}
-  {}
+\fi
 
 % ── User command ──────────────────────────────────────────────────────────────
 % \citemsp{key1/sec/par, key2/sec, key3}
-%   Each entry: key  |  key/loc1  |  key/loc1/loc2
-%   No prefix → §/¶;  letter prefix → see registry above
 \newcounter{citemspidx}
 \newcommand{\citemsp}[1]{%
   [%
