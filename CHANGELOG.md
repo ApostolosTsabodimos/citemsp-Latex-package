@@ -21,12 +21,6 @@ Existing documents written against v2.1 compile and render identically.
 
 ### Changed
 
-- **Mode-safe locator rendering.** The super/subscript pair is now
-  emitted via `\ensuremath{...}` instead of bare `$...$`. Calling
-  `\citemsp{...}` inside math mode (e.g. inside `$...$`, an `equation`
-  environment, or a math-processed caption/title) no longer toggles the
-  surrounding math mode off, which previously caused downstream
-  `\mathcal`/`\mathsf` calls to fail with "only allowed in math mode".
 - **Default locator symbols use `\textsection` and `\textparagraph`**
   instead of `\S` and `\P`. The rendered glyphs (§, ¶) are unchanged.
   This removes a long-standing collision with the common physics/math
@@ -55,7 +49,6 @@ Existing documents written against v2.1 compile and render identically.
 | `revtex4-2` (any options)               | fail | OK (via natbib) |
 | `IEEEtran` (natbib mode)                | fail | OK   |
 | `elsarticle`, `aastex` + natbib         | fail | OK   |
-| Any class with `\citemsp{...}` inside `$...$` / `equation` | broken | OK |
 | Preamble redefining `\S` or `\P`        | broken | OK   |
 
 ### Not addressed

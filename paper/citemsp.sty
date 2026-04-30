@@ -90,14 +90,14 @@
   \ifx\@citesp@sec\empty
     \ifx\@citesp@par\empty\else
       \@citesp@hrefkern
-      \ensuremath{\mbox{}_{\@citesp@subkern\citesize{\@citesp@renderloc{\@citesp@par}{\textparagraph}}}}%
+      $\mbox{}_{\@citesp@subkern\citesize{\@citesp@renderloc{\@citesp@par}{\textparagraph}}}$%
     \fi
   \else
     \@citesp@hrefkern
     \ifx\@citesp@par\empty
-      \raisebox{1.5pt}{\ensuremath{\mbox{}^{\@citesp@supkern\citesize{\@citesp@renderloc{\@citesp@sec}{\textsection}}}}}%
+      \raisebox{1.5pt}{$\mbox{}^{\@citesp@supkern\citesize{\@citesp@renderloc{\@citesp@sec}{\textsection}}}$}%
     \else
-      \raisebox{1.5pt}{\ensuremath{\mbox{}^{\@citesp@supkern\citesize{\@citesp@renderloc{\@citesp@sec}{\textsection}}}_{\@citesp@subkern\citesize{\@citesp@renderloc{\@citesp@par}{\textparagraph}}}}}%
+      \raisebox{1.5pt}{$\mbox{}^{\@citesp@supkern\citesize{\@citesp@renderloc{\@citesp@sec}{\textsection}}}_{\@citesp@subkern\citesize{\@citesp@renderloc{\@citesp@par}{\textparagraph}}}$}%
     \fi
   \fi
 }
