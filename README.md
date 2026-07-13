@@ -32,17 +32,40 @@ Custom prefixes can be registered with `\citemspprefix{letter}{label}`.
 ## Repository structure
 
 ```
-├── ctan/               CTAN upload material
-│   ├── citemsp.sty         Package source (v2.1)
-│   ├── citemsp-doc.tex     Package documentation source
-│   └── citemsp-doc.pdf     Compiled documentation
+├── citemsp.sty          Canonical package source (single source of truth)
+├── Makefile             Sync .sty, build docs/paper/sandbox, package CTAN zip
 │
-├── paper/              arXiv paper
-│   ├── citemsp-paper.tex   Paper source
-│   ├── citemsp-paper.pdf   Compiled paper
-│   └── citemsp.sty         Package copy (for self-contained build)
+├── citemsp/             CTAN submission
+│   ├── citemsp-doc.tex      Package documentation source
+│   ├── citemsp-doc.pdf      Compiled documentation
+│   ├── README.md            CTAN readme
+│   └── LICENSE              LPPL 1.3c
 │
-└── LICENSE             LPPL 1.3c
+├── paper/               arXiv paper
+│   ├── citemsp-paper.tex    Paper source
+│   └── citemsp-paper.pdf    Compiled paper
+│
+├── sandbox/             Development and compatibility testing
+│   ├── sandbox.tex          Main test document
+│   ├── test-overleaf.tex    Overleaf compatibility tests
+│   └── test-compression.tex Compression (numeric-comp) tests
+│
+├── ROADMAP.md
+└── LICENSE              LPPL 1.3c
+```
+
+The `.sty` copies in subfolders are synced from the root via `make sync`.
+
+## Build commands
+
+```bash
+make sync       # Copy citemsp.sty into all subfolders
+make doc        # Build CTAN documentation
+make paper      # Build arXiv paper
+make sandbox    # Build sandbox test document
+make all        # Build everything
+make ctan       # Package CTAN zip
+make clean      # Remove build artifacts
 ```
 
 ## License

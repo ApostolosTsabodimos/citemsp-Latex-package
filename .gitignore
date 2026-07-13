@@ -10,4 +10,19 @@
 *.run.xml
 *.synctex.gz
 *.toc
+*-blx.bib
+
+# filecontents-generated bib files
 refs-citemsp.bib
+sandbox-refs.bib
+overleaf-refs.bib
+test-refs.bib
+
+# CTAN build
+_ctan/
+citemsp.zip
+
+# Synced .sty copies (canonical source is root citemsp.sty)
+citemsp/citemsp.sty
+paper/citemsp.sty
+sandbox/citemsp.sty

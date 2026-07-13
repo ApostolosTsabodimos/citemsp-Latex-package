@@ -1,0 +1,87 @@
+% ─────────────────────────────────────────────────────────────────────────────
+% Overleaf free-tier compatibility test
+%
+% Tests:
+%   1. backend=bibtex (lighter than biber, common on Overleaf)
+%   2. backend=biber  (standard)
+%   3. style=numeric  (no compression — plain style)
+%   4. style=numeric-comp (with compression)
+%   5. pdflatex engine (Overleaf default)
+%
+% Switch the biblatex line below to test each combination.
+% ─────────────────────────────────────────────────────────────────────────────
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+
+%%% COMBINATION TO TEST (uncomment one):
+%% A) numeric-comp + biber (full compression, standard)
+\usepackage[style=numeric-comp, backend=biber, sorting=none]{biblatex}
+%% B) numeric-comp + bibtex (compression, lighter backend)
+%\usepackage[style=numeric-comp, backend=bibtex, sorting=none]{biblatex}
+%% C) numeric + biber (no compression, standard backend)
+%\usepackage[style=numeric, backend=biber]{biblatex}
+%% D) numeric + bibtex (no compression, lighter backend)
+%\usepackage[style=numeric, backend=bibtex]{biblatex}
+
+\begin{filecontents}{overleaf-refs.bib}
+@article{ref1, author={Einstein, Albert}, title={Title One}, journal={J. Phys.}, year={2001}}
+@article{ref2, author={Bohr, Niels}, title={Title Two}, journal={J. Phys.}, year={2002}}
+@article{ref3, author={Dirac, Paul}, title={Title Three}, journal={J. Phys.}, year={2003}}
+@article{ref4, author={Feynman, Richard}, title={Title Four}, journal={J. Phys.}, year={2004}}
+@article{ref5, author={Heisenberg, Werner}, title={Title Five}, journal={J. Phys.}, year={2005}}
+@book{ref6, author={Wald, Robert M.}, title={General Relativity}, publisher={Chicago}, year={1984}}
+@book{ref7, author={Misner, C. W. and Thorne, K. S. and Wheeler, J. A.}, title={Gravitation}, publisher={Freeman}, year={1973}}
+@article{ref8, author={Hawking, Stephen W.}, title={Title Eight}, journal={Nature}, year={2008}}
+\end{filecontents}
+\addbibresource{overleaf-refs.bib}
+
+\usepackage{citemsp}
+\usepackage[colorlinks=true, citecolor=blue]{hyperref}
+
+\begin{document}
+
+\section*{Overleaf Compatibility Test}
+
+\subsection*{Plain citations (range compression if numeric-comp)}
+
+\noindent
+\texttt{\textbackslash cite}: \cite{ref1,ref2,ref3,ref4,ref5} \\
+\texttt{\textbackslash citemsp}: \citemsp{ref1, ref2, ref3, ref4, ref5} \\
+Non-consecutive: \citemsp{ref1, ref2, ref3, ref5, ref6, ref7}
+
+\subsection*{Locator entries}
+
+\noindent
+Section:     \citemsp{ref6/6.1} \\
+Sec + para:  \citemsp{ref6/6.1/2} \\
+Equation:    \citemsp{ref6/3.2/e4.3} \\
+Box:         \citemsp{ref7/b21.1} \\
+Figure:      \citemsp{ref6/6.1/f3} \\
+Footnote:    \citemsp{ref8/1/n7} \\
+Page:        \citemsp{ref6/p42} \\
+Table:       \citemsp{ref7/8.4/t2} \\
+Definition:  \citemsp{ref6/3.2/d5}
+
+\subsection*{Mixed: ranges + locators}
+
+\noindent
+Range then locator:  \citemsp{ref1, ref2, ref3, ref4/3.2} \\
+Locator then range:  \citemsp{ref1/3.2, ref2, ref3, ref4, ref5} \\
+Interleaved:         \citemsp{ref1, ref2, ref3, ref4/e2.1, ref5, ref6, ref7}
+
+\subsection*{Italic context}
+
+\textit{The derivation~\citemsp{ref6/3.2/e4.3} proceeds from the Bianchi identity.}
+
+\subsection*{Realistic paragraph}
+
+The Schwarzschild metric~\citemsp{ref6/6.1/2} describes the vacuum exterior of
+a spherically symmetric mass. The geodesic equation can be found in standard
+references~\citemsp{ref6/3.2/e4.3, ref7/b21.1}. For the original field
+equations see~\citemsp{ref1, ref2, ref3, ref4, ref5}.
+
+\printbibliography
+
+\end{document}
