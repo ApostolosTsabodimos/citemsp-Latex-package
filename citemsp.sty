@@ -167,22 +167,84 @@
 % \citemsp{key1/sec/par, key2/sec, key3}
 %   Each entry: key  |  key/loc1  |  key/loc1/loc2
 %   No prefix → §/¶;  letter prefix → see registry above
-\newcounter{citemspidx}
+%
+%   Plain entries (no /) are batched and emitted via the backend's own \cite
+%   so that numeric-comp / sort&compress range compression works naturally.
+%   Locator entries are emitted individually.  The output interleaves
+%   compressed plain runs and locator entries in their original order.
+
+% Accumulator for a run of consecutive plain keys
+\def\@citesp@plainrun{}
+% Whether we have started emitting anything (for comma insertion)
+\newif\if@citesp@started
+
+% Flush a buffered plain-key run via \cite (backend handles compression)
+\newcommand{\@citesp@flushplain}{%
+  \ifx\@citesp@plainrun\empty\else
+    \if@citesp@started ,\,\fi
+    \@citesp@startedtrue
+    \expandafter\@citesp@citebare\expandafter{\@citesp@plainrun}%
+    \def\@citesp@plainrun{}%
+  \fi
+}
+
 \newcommand{\citemsp}[1]{%
   [%
-  \setcounter{citemspidx}{0}%
+  \def\@citesp@plainrun{}%
+  \@citesp@startedfalse
   \forcsvlist{\@citemsp@item}{#1}%
+  \@citesp@flushplain % flush any trailing plain run
   ]%
 }
 \newcommand{\@citemsp@item}[1]{%
-  \ifnum\value{citemspidx}>0 ,\,\fi
-  \stepcounter{citemspidx}%
   \@citemsp@parse#1///\@nil
 }
 \def\@citemsp@parse#1/#2/#3/#4\@nil{%
   \def\@citesp@sec{#2}%
   \def\@citesp@par{#3}%
-  \citelinksp{#1}%
+  \ifx\@citesp@sec\empty
+    \ifx\@citesp@par\empty
+      % Plain entry — accumulate into the plain-key buffer
+      \ifx\@citesp@plainrun\empty
+        \def\@citesp@plainrun{#1}%
+      \else
+        \edef\@citesp@plainrun{\@citesp@plainrun,#1}%
+      \fi
+    \else
+      % Subscript-only entry — flush plain buffer, then emit
+      \@citesp@flushplain
+      \if@citesp@started ,\,\fi
+      \@citesp@startedtrue
+      \citelinksp{#1}%
+    \fi
+  \else
+    % Locator entry — flush plain buffer, then emit
+    \@citesp@flushplain
+    \if@citesp@started ,\,\fi
+    \@citesp@startedtrue
+    \citelinksp{#1}%
+  \fi
 }
+
+% ── Compression-aware bare-number cite ────────────────────────────────────────
+%  \@citesp@citebare{key1,key2,...} prints the backend's native \cite output
+%  with brackets suppressed, so range compression (numeric-comp / sort&compress)
+%  works exactly as it would for \cite.
+\if@citesp@biblatex
+  \newcommand{\@citesp@citebare}[1]{%
+    \begingroup
+      \renewcommand{\mkbibbrackets}[1]{##1}%
+      \cite{#1}%
+    \endgroup
+  }
+\else
+  \newcommand{\@citesp@citebare}[1]{%
+    \begingroup
+      \let\NAT@open\empty
+      \let\NAT@close\empty
+      \cite{#1}%
+    \endgroup
+  }
+\fi
 
 \endinput

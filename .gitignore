@@ -26,3 +26,6 @@ citemsp.zip
 citemsp/citemsp.sty
 paper/citemsp.sty
 sandbox/citemsp.sty
+
+# Compiled PDFs in sandbox (test artifacts, not tracked)
+sandbox/*.pdf

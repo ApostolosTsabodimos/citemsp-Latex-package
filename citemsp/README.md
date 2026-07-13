@@ -1,20 +1,26 @@
-# citemsp — Per-key citation locators for biblatex
+# citemsp — Per-key citation locators for LaTeX
 
-`citemsp` is a LaTeX package that extends `biblatex` with section (§) and paragraph (¶) locators attached directly to numeric citation labels.
+`citemsp` is a LaTeX package that adds section (§) and paragraph (¶)
+locators — plus equation, figure, box, and other prefix types — directly
+to numeric citation labels. It works on top of either `biblatex` or
+`natbib`.
 
 ## Quick start
 
+**With biblatex:**
+
 ```latex
 \usepackage[style=numeric, backend=biber]{biblatex}
+\addbibresource{refs.bib}
 \usepackage{citemsp}
 ```
 
-```latex
-The Schwarzschild metric~\citemsp{wald1984/6.1/2} describes ...
-% Output: The Schwarzschild metric [1^{§6.1}_{¶2}] describes ...
+**With natbib** (or a class that auto-loads it, e.g. `revtex4-2`,
+`aastex`):
 
-General covariance~\citemsp{einstein1915, wald1984/4, hawking1974/1/2}
-% Output: General covariance [1, 2^{§4}, 3^{§1}_{¶2}]
+```latex
+\usepackage[numbers]{natbib}        % omit if your class loads it
+\usepackage{citemsp}
 ```
 
 ## Syntax
@@ -27,7 +33,31 @@ Each entry in the comma-separated list has the form:
 | `\citemsp{key/sec}` | `[1^{§sec}]` — section only |
 | `\citemsp{key/sec/par}` | `[1^{§sec}_{¶par}]` — section + paragraph |
 
-Entries can be freely mixed: `\citemsp{key1/3.2/5, key2, key3/1}`.
+A leading single letter selects a prefix type from the registry:
+
+| Prefix | Type       | Symbol |
+|--------|------------|--------|
+| `b`    | Box        | □      |
+| `d`    | Definition | ≜      |
+| `e`    | Equation   | eq.    |
+| `f`    | Figure     | ⊡      |
+| `n`    | Footnote   | †      |
+| `p`    | Page       | pp.    |
+| `t`    | Table      | ⊞      |
+
+Register custom prefixes with `\citemspprefix{letter}{label}`.
+
+Entries can be freely mixed: `\citemsp{key1/3.2/5, key2, key3/e4.3}`.
+
+## Document class compatibility
+
+| Class                                | Backend to use  |
+|--------------------------------------|-----------------|
+| `article`, `report`, `book`, KOMA    | either          |
+| `revtex4-2`, `revtex4-1` (APS)      | natbib (auto)   |
+| `aastex` / `aastex631` (AAS)        | natbib (auto)   |
+| `elsarticle` (Elsevier)             | natbib (manual) |
+| `IEEEtran` natbib mode              | natbib (manual) |
 
 ## Installation
 
@@ -55,8 +85,8 @@ Adjust the locator glyph size by redefining `\citemspscale` after loading:
 ## Requirements
 
 - LaTeX2e (2020/10/01 or later)
-- `biblatex` (any numeric style)
-- `graphicx`
+- `biblatex` or `natbib` (any numeric style)
+- `graphicx`, `etoolbox`
 
 ## License
 

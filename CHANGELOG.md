@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.2 (2026-04-28)
+## v2.2 (2026-07-13)
 
 Compatibility and robustness pass. The user-facing API
 (`\citemsp{key/sec/par}`, `\citemspprefix{letter}{label}`, the seven

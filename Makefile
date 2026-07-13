@@ -25,7 +25,7 @@ all: doc paper sandbox
 ctan: doc
 	mkdir -p _ctan/citemsp
 	cp citemsp/$(STY) citemsp/citemsp-doc.tex citemsp/citemsp-doc.pdf \
-	   citemsp/README.md citemsp/LICENSE _ctan/citemsp/
+	   citemsp/README.md citemsp/LICENSE ../CHANGELOG.md _ctan/citemsp/
 	cd _ctan && zip -r ../citemsp.zip citemsp/
 	rm -rf _ctan
 

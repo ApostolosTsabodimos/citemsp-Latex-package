@@ -1,0 +1,90 @@
+% ─────────────────────────────────────────────────────────────────────────────
+% natbib backend test
+%
+% Verifies citemsp works with natbib (the path used by revtex4-2, aastex,
+% elsarticle, etc.).  Uses plain article + natbib to avoid needing the
+% journal class files installed locally.
+%
+% Build:  pdflatex test-natbib && bibtex test-natbib && pdflatex test-natbib && pdflatex test-natbib
+%    or:  latexmk -pdf test-natbib.tex
+% ─────────────────────────────────────────────────────────────────────────────
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[numbers, sort&compress]{natbib}
+
+\usepackage{citemsp}
+\usepackage[colorlinks=true, citecolor=blue]{hyperref}
+
+\begin{document}
+
+\section*{citemsp --- natbib Backend Test}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\subsection*{1. Plain citations}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\noindent
+\texttt{\textbackslash cite} baseline: \cite{ref1,ref2,ref3,ref4,ref5} \\
+\texttt{\textbackslash citemsp} same keys: \citemsp{ref1, ref2, ref3, ref4, ref5} \\
+Single: \citemsp{ref3}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\subsection*{2. Default locators: section and paragraph}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\noindent
+Section only:              \citemsp{ref3/6.1} \\
+Section + paragraph:       \citemsp{ref3/6.1/2} \\
+Paragraph only (sub slot): \citemsp{ref3//5} \\
+Deep subsection + para:    \citemsp{ref3/3.2.1/4}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\subsection*{3. Built-in prefix locators}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\noindent
+\begin{tabular}{llll}
+\textbf{Prefix} & \textbf{Type} & \textbf{In super slot} & \textbf{In sub slot} \\[2pt]
+\texttt{b} (box)        & $\square$     & \citemsp{ref5/b21.1}     & \citemsp{ref5/8.4/b21.1} \\
+\texttt{d} (definition) & $\triangleq$  & \citemsp{ref3/d5}        & \citemsp{ref3/3.2/d5} \\
+\texttt{e} (equation)   & eq.           & \citemsp{ref3/e4.3}      & \citemsp{ref3/3.2/e4.3} \\
+\texttt{f} (figure)     & $\boxdot$     & \citemsp{ref3/f3}        & \citemsp{ref3/6.1/f3} \\
+\texttt{n} (footnote)   & $\dagger$     & \citemsp{ref4/n7}        & \citemsp{ref4/1/n7} \\
+\texttt{p} (page)       & pp.           & \citemsp{ref3/p42}       & \citemsp{ref3/3.2/p42} \\
+\texttt{t} (table)      & $\boxplus$    & \citemsp{ref5/t2}        & \citemsp{ref5/8.4/t2} \\
+\end{tabular}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\subsection*{4. Mixed locator types}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\noindent
+\verb|\citemsp{ref3/6.1/2, ref5/b21.1, ref4/1/e4.3}|\\
+Output: \citemsp{ref3/6.1/2, ref5/b21.1, ref4/1/e4.3}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\subsection*{5. Italic context}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\noindent
+Upright: The field equations~\citemsp{ref3/3.2/e4.3} can be derived.
+
+\medskip\noindent
+\textit{Italic: Hawking radiation~\citemsp{ref4/1/2} implies black holes radiate.}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\subsection*{6. Realistic paragraph}
+% ═════════════════════════════════════════════════════════════════════════════
+
+The Schwarzschild solution~\citemsp{ref2/1/3} was found shortly after the
+field equations~\citemsp{ref1} were published. A modern treatment can be
+found in standard textbooks~\citemsp{ref3/6.1/2, ref5/b21.1}. The
+singularity theorems~\citemsp{ref6, ref4/1/e4.3} later showed that
+gravitational collapse is generic.
+
+\bibliographystyle{unsrtnat}
+\bibliography{sandbox-refs}
+
+\end{document}
