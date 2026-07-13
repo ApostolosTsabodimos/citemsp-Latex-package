@@ -1,5 +1,5 @@
 %%
-%% citemsp.sty — Per-key citation locators for biblatex
+%% citemsp.sty — Per-key citation locators for biblatex or natbib
 %%
 %% Copyright (c) 2025 Apostolos Tsampodimos
 %%
@@ -13,25 +13,27 @@
 %% This work consists of the files citemsp.sty and citemsp-doc.tex.
 %%
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{citemsp}[2025/04/21 v2.1 Per-key citation locators for biblatex]
+\ProvidesPackage{citemsp}[2026/07/13 v2.2 Per-key citation locators (biblatex or natbib)]
+
+% ── Backend detection ────────────────────────────────────────────────────────
+%  citemsp can sit on top of either biblatex or natbib.  Whichever is loaded
+%  first wins; if both are loaded (which itself would be an error), biblatex
+%  is preferred.
+\newif\if@citesp@biblatex
+\newif\if@citesp@natbib
+\@ifpackageloaded{biblatex}
+  {\@citesp@biblatextrue}
+  {\@ifpackageloaded{natbib}
+     {\@citesp@natbibtrue}
+     {\PackageError{citemsp}
+        {Either biblatex or natbib must be loaded before citemsp}
+        {Load \string\usepackage{biblatex} or \string\usepackage{natbib}
+         (or use a class such as revtex4-2 that loads natbib automatically)
+         before \string\usepackage{citemsp}.}}}
 
 % ── Dependencies ──────────────────────────────────────────────────────────────
-\@ifpackageloaded{biblatex}{}{%
-  \PackageError{citemsp}
-    {The biblatex package must be loaded before citemsp}
-    {Load biblatex with \string\usepackage[...]{biblatex} before
-     \string\usepackage{citemsp}.}%
-}
-\@ifpackageloaded{natbib}{%
-  \PackageWarning{citemsp}
-    {natbib is loaded (possibly by your document class, e.g.\MessageBreak
-     revtex4-2). biblatex and natbib are incompatible.\MessageBreak
-     Consider using \string\documentclass{article} instead,\MessageBreak
-     or pass the class option natbib=false if available}%
-}{}
-
 \RequirePackage{graphicx}   % \scalebox
-\RequirePackage{etoolbox}   % \forcsvlist, \letcs (also loaded by biblatex)
+\RequirePackage{etoolbox}   % \forcsvlist (biblatex pulls it; natbib does not)
 
 % Load amssymb only when its symbols are not already provided (e.g. by stix,
 % unicode-math, or newtxmath).  We test for \square which citemsp needs.
@@ -60,12 +62,23 @@
 \newcommand{\@citesp@par}{}
 \def\@citesp@itshape{it}%
 
-% ── Hyperref-aware spacing ────────────────────────────────────────────────────
+% ── Hyperref-aware spacing and link wrapper ──────────────────────────────────
+%  \@citesp@hrefkern : tiny kern after the bracketed number when hyperref is
+%                     loaded without colorlinks (so the bracket doesn't kiss
+%                     the locator subscript).
+%  \@citesp@linkwrap : on the natbib path, wraps the printed number in a
+%                     hyperref jump to the bibliography entry.  On the biblatex
+%                     path, biblatex's own \bibhyperref is used instead, so
+%                     this stays as identity.
 \def\@citesp@hrefkern{}
+\def\@citesp@linkwrap#1#2{#2}
 \AtBeginDocument{%
   \@ifpackageloaded{hyperref}{%
     \ifHy@colorlinks\else
       \def\@citesp@hrefkern{\kern1.5pt}%
+    \fi
+    \if@citesp@natbib
+      \def\@citesp@linkwrap#1#2{\hyperlink{cite.#1}{#2}}%
     \fi
   }{}%
 }
@@ -105,141 +118,71 @@
   \fi
 }
 
-% ── Locator rendering helper ──────────────────────────────────────────────────
-%  Prints the locator superscript/subscript pair.
-%  Called only when at least one locator slot is non-empty.
+% ── Locator-rendering body (backend-independent) ─────────────────────────────
+%  Emits the super/subscript locator pair for the current \@citesp@sec /
+%  \@citesp@par.  Called immediately after the citation number is printed.
+%  Uses \textsection / \textparagraph instead of \S / \P to avoid clashing
+%  with common physics preamble redefinitions of those commands.
 \newcommand{\@citesp@renderlocators}{%
-    % Adjust kerning when the surrounding text is italic
-    \ifx\f@shape\@citesp@itshape
-      \def\@citesp@supkern{\mkern2mu}%
-      \def\@citesp@subkern{\mkern-1mu}%
-    \else
-      \def\@citesp@supkern{}%
-      \def\@citesp@subkern{}%
-    \fi
-    % Render locators: dispatched by prefix
-    \ifx\@citesp@sec\empty
+  \ifx\f@shape\@citesp@itshape
+    \def\@citesp@supkern{\mkern2mu}%
+    \def\@citesp@subkern{\mkern-1mu}%
+  \else
+    \def\@citesp@supkern{}%
+    \def\@citesp@subkern{}%
+  \fi
+  \ifx\@citesp@sec\empty
+    \ifx\@citesp@par\empty\else
       \@citesp@hrefkern
-      $\mbox{}_{\@citesp@subkern\citemspsize{\@citesp@renderloc{\@citesp@par}{\P}}}$%
-    \else
-      \@citesp@hrefkern
-      \ifx\@citesp@par\empty
-        \raisebox{1.5pt}{$\mbox{}^{\@citesp@supkern\citemspsize{\@citesp@renderloc{\@citesp@sec}{\S}}}$}%
-      \else
-        \raisebox{1.5pt}{$\mbox{}^{\@citesp@supkern\citemspsize{\@citesp@renderloc{\@citesp@sec}{\S}}}_{\@citesp@subkern\citemspsize{\@citesp@renderloc{\@citesp@par}{\P}}}$}%
-      \fi
+      $\mbox{}_{\@citesp@subkern\citemspsize{\@citesp@renderloc{\@citesp@par}{\textparagraph}}}$%
     \fi
-}
-
-% ── Compression support detection ────────────────────────────────────────────
-%  numeric-comp.cbx defines cite:comp and cite:dump for range compression.
-%  We detect these at begin-document and set a flag.
-\newif\if@citesp@comp
-\AtBeginDocument{%
-  \ifcsname abx@macro@cite:comp\endcsname
-    \@citesp@comptrue
   \else
-    \@citesp@compfalse
-  \fi
-}
-
-% ── Core cite command ─────────────────────────────────────────────────────────
-%  Integrates with biblatex's cite:comp/cite:dump when available (numeric-comp
-%  style) so that plain entries get range compression (e.g. [12–19]).
-%  Entries with locators flush any pending range and render individually.
-%
-%  Helper: render a locator entry, flushing any pending range first.
-\newif\if@citesp@needsdelim
-\newcommand{\@citesp@renderlocentry}{%
-  \if@citesp@comp
-    \usebibmacro{cite:dump}%
-    \if@citesp@needsdelim{,\,}\fi
-    % Reset comp state so next cite:comp emits a delimiter
-    \setcounter{cbx@tempcnta}{0}%
-    \setcounter{cbx@tempcntb}{-1}%
-  \else
-    \if@citesp@needsdelim{,\,}\fi
-  \fi
-  \bibhyperref{\printfield{labelnumber}}%
-  \@citesp@renderlocators
-  \global\@citesp@needsdelimtrue
-}
-%
-%  \citelinksp is called with ALL keys at once by \citemsp.
-%  The per-entry code retrieves stored locator data for the current key.
-\DeclareCiteCommand{\citelinksp}
-  {%
-    \if@citesp@comp\usebibmacro{cite:init}\fi
-    \global\@citesp@needsdelimfalse
-  }
-  {%
-    \usebibmacro{citeindex}%
-    % Retrieve locator data stored for this entry key
-    \@citesp@loadloc{\thefield{entrykey}}%
-    \ifx\@citesp@sec\empty
-      \ifx\@citesp@par\empty
-        % ── Plain entry: use compression if available ──
-        \if@citesp@comp
-          \usebibmacro{cite:comp}%
-          \global\@citesp@needsdelimtrue
-        \else
-          \if@citesp@needsdelim{,\,}\fi
-          \bibhyperref{\printfield{labelnumber}}%
-          \global\@citesp@needsdelimtrue
-        \fi
-      \else
-        % ── Subscript-only locator ──
-        \@citesp@renderlocentry
-      \fi
+    \@citesp@hrefkern
+    \ifx\@citesp@par\empty
+      \raisebox{1.5pt}{$\mbox{}^{\@citesp@supkern\citemspsize{\@citesp@renderloc{\@citesp@sec}{\textsection}}}$}%
     \else
-      % ── Superscript (possibly with subscript) locator ──
-      \@citesp@renderlocentry
+      \raisebox{1.5pt}{$\mbox{}^{\@citesp@supkern\citemspsize{\@citesp@renderloc{\@citesp@sec}{\textsection}}}_{\@citesp@subkern\citemspsize{\@citesp@renderloc{\@citesp@par}{\textparagraph}}}$}%
     \fi
-  }
-  {}
-  {\if@citesp@comp\usebibmacro{cite:dump}\fi}
-
-% ── Per-key locator storage ──────────────────────────────────────────────────
-%  Before calling \citelinksp, \citemsp stores locator data for each key
-%  in \@citesp@sec@<key> and \@citesp@par@<key> macros.
-%  \@citesp@loadloc retrieves them.
-\newcommand{\@citesp@storeloc}[3]{%  #1=key, #2=sec, #3=par
-  \expandafter\def\csname @citesp@sec@#1\endcsname{#2}%
-  \expandafter\def\csname @citesp@par@#1\endcsname{#3}%
-}
-\newcommand{\@citesp@loadloc}[1]{%  #1=entrykey
-  \ifcsname @citesp@sec@#1\endcsname
-    \letcs\@citesp@sec{@citesp@sec@#1}%
-    \letcs\@citesp@par{@citesp@par@#1}%
-  \else
-    \def\@citesp@sec{}%
-    \def\@citesp@par{}%
   \fi
 }
+
+% ── Backend-specific cite command ────────────────────────────────────────────
+%  \citelinksp{<single-key>} prints the citation number (linked) followed by
+%  the locator super/subscripts.  The list-and-bracket handling lives in
+%  \citemsp below; here we only handle one key.
+\if@citesp@biblatex
+  \DeclareCiteCommand{\citelinksp}
+    {}
+    {\bibhyperref{\printfield{labelnumber}}\@citesp@renderlocators}
+    {}
+    {}
+\else
+  \newcommand{\citelinksp}[1]{%
+    \@citesp@linkwrap{#1}{\citenum{#1}}%
+    \@citesp@renderlocators
+  }
+\fi
 
 % ── User command ──────────────────────────────────────────────────────────────
 % \citemsp{key1/sec/par, key2/sec, key3}
 %   Each entry: key  |  key/loc1  |  key/loc1/loc2
 %   No prefix → §/¶;  letter prefix → see registry above
-\def\@citesp@keys{}
+\newcounter{citemspidx}
 \newcommand{\citemsp}[1]{%
   [%
-  \def\@citesp@keys{}%
-  \forcsvlist{\@citemsp@storeitem}{#1}%
-  \expandafter\citelinksp\expandafter{\@citesp@keys}%
+  \setcounter{citemspidx}{0}%
+  \forcsvlist{\@citemsp@item}{#1}%
   ]%
 }
-\newcommand{\@citemsp@storeitem}[1]{%
-  \@citemsp@parsestore#1///\@nil
+\newcommand{\@citemsp@item}[1]{%
+  \ifnum\value{citemspidx}>0 ,\,\fi
+  \stepcounter{citemspidx}%
+  \@citemsp@parse#1///\@nil
 }
-\def\@citemsp@parsestore#1/#2/#3/#4\@nil{%
-  \@citesp@storeloc{#1}{#2}{#3}%
-  % Append key to the comma-separated key list
-  \ifx\@citesp@keys\empty
-    \def\@citesp@keys{#1}%
-  \else
-    \expandafter\def\expandafter\@citesp@keys\expandafter{\@citesp@keys,#1}%
-  \fi
+\def\@citemsp@parse#1/#2/#3/#4\@nil{%
+  \def\@citesp@sec{#2}%
+  \def\@citesp@par{#3}%
+  \citelinksp{#1}%
 }
 
 \endinput
