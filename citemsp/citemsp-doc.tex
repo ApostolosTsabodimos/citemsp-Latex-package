@@ -87,7 +87,7 @@ Saul\.etekio~3, 10257 Vilnius, Lithuania\\
 
 \begin{abstract}
 \noindent
-The \pkg{citemsp} package extends \pkg{biblatex} with a single user-facing command, \cmd{citemsp}, that attaches section~(\S), paragraph~(\P), and prefix-based locators directly to numeric citation labels. An extensible prefix registry provides seven built-in types --- equation~(eq.), box~($\square$), definition~($\triangleq$), figure~($\boxdot$), footnote~($\dagger$), page~(pp.), and table~($\boxplus$) --- and users can register custom prefixes with \cmd{citemspprefix}. Standard \pkg{biblatex} provides locator fields through its postnote mechanism, but these cannot display stacked locator pairs per key in a compact inline form. The \pkg{citemsp} package solves this by parsing a slash-delimited syntax, rendering each locator as a superscript/subscript pair on the corresponding citation number, producing output such as~\citemsp{wald1984/3.2/5, mtw1973/b21.1, hawking1974/1/e4.3}. The package is compatible with all \pkg{biblatex} numeric styles and requires only \pkg{biblatex}, \pkg{graphicx}, and \pkg{amssymb}.
+The \pkg{citemsp} package extends \pkg{biblatex} with a single user-facing command, \cmd{citemsp}, that attaches section~(\S), paragraph~(\P), and prefix-based locators directly to numeric citation labels. An extensible prefix registry provides six built-in types --- equation~(eq.), definition~($\triangleq$), figure~(fig.), footnote~($\dagger$), page~(pp.), and table~($\boxplus$) --- and users can register custom prefixes with \cmd{citemspprefix}. Standard \pkg{biblatex} provides locator fields through its postnote mechanism, but these cannot display stacked locator pairs per key in a compact inline form. The \pkg{citemsp} package solves this by parsing a slash-delimited syntax, rendering each locator as a superscript/subscript pair on the corresponding citation number, producing output such as~\citemsp{wald1984/3.2/5, mtw1973/p520, hawking1974/1/e4.3}. The package is compatible with all \pkg{biblatex} numeric styles and requires only \pkg{biblatex}, \pkg{graphicx}, and \pkg{amssymb}.
 \end{abstract}
 
 \tableofcontents
@@ -160,13 +160,11 @@ The \cmd{citemsp} command accepts a comma-separated list of entries.  Each entry
 \texttt{\textbackslash citemsp\{key\}}                    & $\longrightarrow$ & \citemsp{wald1984}\\[3pt]
 \texttt{\textbackslash citemsp\{key/section\}}             & $\longrightarrow$ & \citemsp{wald1984/6.2}\\[3pt]
 \texttt{\textbackslash citemsp\{key/section/paragraph\}}   & $\longrightarrow$ & \citemsp{wald1984/6.2/3}\\[3pt]
-\texttt{\textbackslash citemsp\{key/section/e4.3\}}        & $\longrightarrow$ & \citemsp{wald1984/6.2/e4.3}\\[3pt]
-\texttt{\textbackslash citemsp\{key/b21.1\}}               & $\longrightarrow$ & \citemsp{mtw1973/b21.1}\\[3pt]
-\texttt{\textbackslash citemsp\{key/section/b8.1\}}        & $\longrightarrow$ & \citemsp{mtw1973/8.4/b8.1}
+\texttt{\textbackslash citemsp\{key/section/e4.3\}}        & $\longrightarrow$ & \citemsp{wald1984/6.2/e4.3}
 \end{tabular*}
 \end{tcolorbox}
 
-\noindent The built-in prefixes are: \texttt{b}~for box~($\square$), \texttt{d}~for definition~($\triangleq$), \texttt{e}~for equation~(eq.), \texttt{f}~for figure~($\boxdot$), \texttt{n}~for footnote~($\dagger$), \texttt{p}~for page~(pp.), and \texttt{t}~for table~($\boxplus$). No prefix defaults to \S\ or \P\ depending on slot position. When both locators are present, the first appears as a superscript and the second as a subscript. All are found in the following table:
+\noindent The built-in prefixes are: \texttt{d}~for definition~($\triangleq$), \texttt{e}~for equation~(eq.), \texttt{f}~for figure~(fig.), \texttt{n}~for footnote~($\dagger$), \texttt{p}~for page~(pp.), and \texttt{t}~for table~($\boxplus$). No prefix defaults to \S\ or \P\ depending on slot position. When both locators are present, the first appears as a superscript and the second as a subscript. All are found in the following table:
 
 \begin{table}[h]
 \centering
@@ -176,10 +174,9 @@ The \cmd{citemsp} command accepts a comma-separated list of entries.  Each entry
 \rowcolor{blue!15}
 \textbf{Prefix} & \textbf{Locator} & \textbf{Render} & \textbf{Output} \\
 \midrule
-\texttt{b} & Box         & $\square$     & \citemsp{mtw1973/b21.1} \\
 \texttt{d} & Definition  & $\triangleq$  & \citemsp{wald1984/3.2/d5} \\
 \texttt{e} & Equation    & eq.           & \citemsp{wald1984/6.2/e4.3} \\
-\texttt{f} & Figure      & $\boxdot$     & \citemsp{wald1984/6.1/f3} \\
+\texttt{f} & Figure      & fig.          & \citemsp{wald1984/6.1/f3} \\
 \texttt{n} & Footnote    & $\dagger$     & \citemsp{hawking1974/1/n7} \\
 \texttt{p} & Page        & pp.           & \citemsp{wald1984/p42} \\
 \texttt{t} & Table       & $\boxplus$    & \citemsp{mtw1973/8.4/t2} \\
@@ -298,19 +295,6 @@ from a variational principle.
 \noindent\textbf{Output:} The field equations~\citemsp{wald1984/3.2/e4.3} can be derived from a variational principle.
 
 
-\subsection{Box locator}
-
-Use the \texttt{b} prefix for box environments, as used extensively in Misner, Thorne \& Wheeler's \textit{Gravitation}~\cite{mtw1973}:
-
-\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
-\begin{verbatim}
-The stress-energy tensor~\citemsp{mtw1973/b21.1} is discussed
-in a self-contained box.
-\end{verbatim}
-\end{tcolorbox}
-
-\noindent\textbf{Output:} The stress-energy tensor~\citemsp{mtw1973/b21.1} is discussed in a self-contained box.
-
 
 \subsection{Mixed locator types}
 
@@ -318,17 +302,17 @@ All locator types can be freely mixed in a single call:
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
 \begin{verbatim}
-See~\citemsp{wald1984/6.1/2, mtw1973/b21.1, hawking1974/1/e4.3}
+See~\citemsp{wald1984/6.1/2, mtw1973/p520, hawking1974/1/e4.3}
 for further details.
 \end{verbatim}
 \end{tcolorbox}
 
-\noindent\textbf{Output:} See~\citemsp{wald1984/6.1/2, mtw1973/b21.1, hawking1974/1/e4.3} for further details.
+\noindent\textbf{Output:} See~\citemsp{wald1984/6.1/2, mtw1973/p520, hawking1974/1/e4.3} for further details.
 
 
 \subsection{Additional locator types}
 
-The prefix registry provides seven built-in types beyond the default \S/\P:
+The prefix registry provides six built-in types beyond the default \S/\P:
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt, top=6pt, bottom=6pt, left=10pt, right=10pt]
 \begin{verbatim}
@@ -369,7 +353,7 @@ The prefix registry provides seven built-in types beyond the default \S/\P:
 \begin{itemize}[leftmargin=2em]
   \item \textbf{Section numbering:} use the source's native format (e.g., 3.2.1, IV, A.1).
   \item \textbf{Paragraph counting:} count paragraphs from the start of the referenced section.
-  \item \textbf{Prefix locators:} ideally use a single-letter prefix for typed locators: \texttt{b}~(box), \texttt{d}~(definition), \texttt{e}~(equation), \texttt{f}~(figure), \texttt{n}~(footnote), \texttt{p}~(page), \texttt{t}~(table). E.g., \texttt{key/3.2/e4.3} for an equation, \texttt{key/b21.1} for a box.
+  \item \textbf{Prefix locators:} ideally use a single-letter prefix for typed locators: \texttt{d}~(definition), \texttt{e}~(equation), \texttt{f}~(figure), \texttt{n}~(footnote), \texttt{p}~(page), \texttt{t}~(table). E.g., \texttt{key/3.2/e4.3} for an equation, \texttt{key/p42} for a page.
   \item \textbf{Subsection references:} use the full path (e.g., \texttt{key/3.2.1}), not a relative number.
   \item \textbf{Plain citations:} \verb|\citemsp{key}| with no slashes produces a standard numeric citation, so the command can replace \verb|\cite| if desired.
 \end{itemize}
@@ -383,7 +367,7 @@ The prefix registry provides seven built-in types beyond the default \S/\P:
   \item \LaTeX2e\ (2020/10/01 or later)
   \item \pkg{biblatex} (any numeric style) with Biber backend
   \item \pkg{graphicx}
-  \item \pkg{amssymb} (for $\square$, $\triangleq$, $\boxdot$, $\boxplus$, $\dagger$ locator glyphs)
+  \item \pkg{amssymb} (for $\square$, $\triangleq$, $\boxplus$, $\dagger$ locator glyphs)
 \end{itemize}
 
 % ══════════════════════════════════════════════════════════════════════════════

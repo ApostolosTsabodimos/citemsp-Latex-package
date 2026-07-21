@@ -1,21 +1,21 @@
-.PHONY: sync doc paper sandbox all ctan clean
+.PHONY: doc paper sandbox all ctan clean
 
 STY = citemsp.sty
 
-# ── Sync the canonical .sty into every subfolder ─────────────────────────────
-sync:
-	cp $(STY) citemsp/$(STY)
-	cp $(STY) paper/$(STY)
-	cp $(STY) sandbox/$(STY)
+# Root directory (where the canonical .sty lives)
+ROOT := $(CURDIR)
+
+# Export TEXINPUTS so that subdirectory builds find the root .sty
+export TEXINPUTS := $(ROOT):$(TEXINPUTS)
 
 # ── Build targets ────────────────────────────────────────────────────────────
-doc: sync
+doc:
 	cd citemsp && latexmk -pdf citemsp-doc.tex
 
-paper: sync
+paper:
 	cd paper && latexmk -pdf citemsp-paper.tex
 
-sandbox: sync
+sandbox:
 	cd sandbox && latexmk -pdf sandbox.tex
 
 all: doc paper sandbox
@@ -24,7 +24,7 @@ all: doc paper sandbox
 #  Packages only what CTAN expects: .sty, docs (.tex + .pdf), README, LICENSE.
 ctan: doc
 	mkdir -p _ctan/citemsp
-	cp citemsp/$(STY) citemsp/citemsp-doc.tex citemsp/citemsp-doc.pdf \
+	cp $(STY) citemsp/citemsp-doc.tex citemsp/citemsp-doc.pdf \
 	   citemsp/README.md citemsp/LICENSE ../CHANGELOG.md _ctan/citemsp/
 	cd _ctan && zip -r ../citemsp.zip citemsp/
 	rm -rf _ctan

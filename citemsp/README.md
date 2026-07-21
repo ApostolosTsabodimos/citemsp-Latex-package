@@ -1,7 +1,7 @@
 # citemsp — Per-key citation locators for LaTeX
 
 `citemsp` is a LaTeX package that adds section (§) and paragraph (¶)
-locators — plus equation, figure, box, and other prefix types — directly
+locators — plus equation, figure, definition, and other prefix types — directly
 to numeric citation labels. It works on top of either `biblatex` or
 `natbib`.
 
@@ -37,13 +37,16 @@ A leading single letter selects a prefix type from the registry:
 
 | Prefix | Type       | Symbol |
 |--------|------------|--------|
-| `b`    | Box        | □      |
+| `A`    | Appendix   | App.   |
+| `C`    | Corollary  | Cor.   |
 | `d`    | Definition | ≜      |
 | `e`    | Equation   | eq.    |
-| `f`    | Figure     | ⊡      |
+| `f`    | Figure     | fig.   |
+| `L`    | Lemma      | Lem.   |
 | `n`    | Footnote   | †      |
 | `p`    | Page       | pp.    |
 | `t`    | Table      | ⊞      |
+| `T`    | Theorem    | Th.    |
 
 Register custom prefixes with `\citemspprefix{letter}{label}`.
 

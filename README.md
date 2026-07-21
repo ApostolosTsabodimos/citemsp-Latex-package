@@ -36,7 +36,7 @@ type from the registry below.
 ```latex
 \citemsp{wald1984/6.1/2}          % [1] with §6.1 (super) and ¶2 (sub)
 \citemsp{wald1984/3.2/e4.3}       % [1] with §3.2 (super) and eq.4.3 (sub)
-\citemsp{mtw1973/b21.1}           % [2] with □21.1 (sub)
+\citemsp{mtw1973/p520}            % [2] with pp.520 (super)
 \citemsp{a, b/2.1, c/3/e4}        % comma-separated multi-key list
 ```
 
@@ -44,13 +44,16 @@ type from the registry below.
 
 | Prefix | Type       | Symbol |
 |--------|------------|--------|
-| `b`    | Box        | □      |
+| `A`    | Appendix   | App.   |
+| `C`    | Corollary  | Cor.   |
 | `d`    | Definition | ≜      |
 | `e`    | Equation   | eq.    |
-| `f`    | Figure     | ⊡      |
+| `f`    | Figure     | fig.   |
+| `L`    | Lemma      | Lem.   |
 | `n`    | Footnote   | †      |
 | `p`    | Page       | pp.    |
 | `t`    | Table      | ⊞      |
+| `T`    | Theorem    | Th.    |
 
 Register custom prefixes with `\citemspprefix{letter}{label}`.
 
@@ -68,8 +71,8 @@ Register custom prefixes with `\citemspprefix{letter}{label}`.
 ## Repository structure
 
 ```
-├── citemsp.sty          Canonical package source (single source of truth)
-├── Makefile             Sync .sty, build docs/paper/sandbox, package CTAN zip
+├── citemsp.sty          Package source (single copy, used by all subdirectories)
+├── Makefile             Build docs/paper/sandbox, package CTAN zip
 │
 ├── citemsp/             CTAN submission
 │   ├── citemsp-doc.tex      Package documentation source
@@ -91,12 +94,11 @@ Register custom prefixes with `\citemspprefix{letter}{label}`.
 └── LICENSE              LPPL 1.3c
 ```
 
-The `.sty` copies in subfolders are synced from the root via `make sync`.
+Subdirectory builds find `citemsp.sty` via `TEXINPUTS` (set by the Makefile).
 
 ## Build commands
 
 ```bash
-make sync       # Copy citemsp.sty into all subfolders
 make doc        # Build CTAN documentation
 make paper      # Build arXiv paper
 make sandbox    # Build sandbox test document

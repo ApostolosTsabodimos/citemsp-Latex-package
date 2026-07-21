@@ -23,11 +23,7 @@
 \usepackage{citemsp}
 \usepackage[colorlinks=true, citecolor=linkblue, linkcolor=linkblue, urlcolor=linkblue]{hyperref}
 
-% ── Custom prefix registration ───────────────────────────────────────────────
-\citemspprefix{T}{Thm.}%     theorem
-\citemspprefix{L}{Lem.}%     lemma
-\citemspprefix{C}{Cor.}%     corollary
-\citemspprefix{A}{App.}%     appendix
+% ── Custom prefix registration (T, L, C, A are now built-in) ────────────────
 \citemspprefix{w}{w.}%       widget (arbitrary user prefix)
 
 \begin{document}
@@ -68,10 +64,9 @@ Each built-in prefix in both the superscript and subscript slots:
 \medskip\noindent
 \begin{tabular}{llll}
 \textbf{Prefix} & \textbf{Type} & \textbf{In super slot} & \textbf{In sub slot} \\[2pt]
-\texttt{b} (box)        & $\square$     & \citemsp{ref5/b21.1}     & \citemsp{ref5/8.4/b21.1} \\
 \texttt{d} (definition) & $\triangleq$  & \citemsp{ref3/d5}        & \citemsp{ref3/3.2/d5} \\
 \texttt{e} (equation)   & eq.           & \citemsp{ref3/e4.3}      & \citemsp{ref3/3.2/e4.3} \\
-\texttt{f} (figure)     & $\boxdot$     & \citemsp{ref3/f3}        & \citemsp{ref3/6.1/f3} \\
+\texttt{f} (figure)     & fig.          & \citemsp{ref3/f3}        & \citemsp{ref3/6.1/f3} \\
 \texttt{n} (footnote)   & $\dagger$     & \citemsp{ref4/n7}        & \citemsp{ref4/1/n7} \\
 \texttt{p} (page)       & pp.           & \citemsp{ref3/p42}       & \citemsp{ref3/3.2/p42} \\
 \texttt{t} (table)      & $\boxplus$    & \citemsp{ref5/t2}        & \citemsp{ref5/8.4/t2} \\
@@ -79,23 +74,25 @@ Each built-in prefix in both the superscript and subscript slots:
 
 
 % ═════════════════════════════════════════════════════════════════════════════
-\subsection*{4. Custom user-registered prefixes}
+\subsection*{4. Built-in prefixes: theorem, lemma, corollary, appendix}
 % ═════════════════════════════════════════════════════════════════════════════
 
-Registered with \verb|\citemspprefix| in the preamble:
+Now built-in (no registration needed):
 
 \medskip\noindent
 \begin{tabular}{lll}
 \textbf{Prefix} & \textbf{Type} & \textbf{Output} \\[2pt]
-\texttt{T} (theorem)   & Thm. & \citemsp{ref3/T4.2}    \\
+\texttt{T} (theorem)   & Th.  & \citemsp{ref3/T4.2}    \\
 \texttt{L} (lemma)     & Lem. & \citemsp{ref3/3.2/L1}  \\
 \texttt{C} (corollary) & Cor. & \citemsp{ref3/C3}      \\
 \texttt{A} (appendix)  & App. & \citemsp{ref3/A2}      \\
-\texttt{w} (widget)    & w.   & \citemsp{ref5/w7}      \\
 \end{tabular}
 
 \medskip\noindent
-Custom + default mixed: \citemsp{ref3/T4.2/e3.1}
+Custom prefix (registered with \verb|\citemspprefix{w}{w.}|): \citemsp{ref5/w7}
+
+\medskip\noindent
+Mixed built-in types: \citemsp{ref3/T4.2/e3.1}
 
 
 % ═════════════════════════════════════════════════════════════════════════════
@@ -103,8 +100,8 @@ Custom + default mixed: \citemsp{ref3/T4.2/e3.1}
 % ═════════════════════════════════════════════════════════════════════════════
 
 \noindent
-\verb|\citemsp{ref3/6.1/2, ref5/b21.1, ref4/1/e4.3}|\\
-Output: \citemsp{ref3/6.1/2, ref5/b21.1, ref4/1/e4.3}
+\verb|\citemsp{ref3/6.1/2, ref5/p520, ref4/1/e4.3}|\\
+Output: \citemsp{ref3/6.1/2, ref5/p520, ref4/1/e4.3}
 
 \medskip\noindent
 \verb|\citemsp{ref3/T4.2, ref1/3.2/d5, ref5/8.4/t2, ref7/p42}|\\
@@ -120,8 +117,8 @@ Range then locator:                \citemsp{ref1, ref2, ref3, ref4/3.2} \\
 Locator then range:                \citemsp{ref1/3.2, ref2, ref3, ref4, ref5} \\
 Plain, locator, range:             \citemsp{ref1, ref2/3.2, ref3, ref4, ref5} \\
 Range, locator, range:             \citemsp{ref1, ref2, ref3, ref4/e2.1, ref5, ref6, ref7} \\
-Two locators between ranges:       \citemsp{ref1, ref2, ref3, ref4/3.1, ref5/b2.3, ref6, ref7, ref8} \\
-Adjacent locators only:            \citemsp{ref3/3.1, ref4/e2.1, ref5/b4.2}
+Two locators between ranges:       \citemsp{ref1, ref2, ref3, ref4/3.1, ref5/p23, ref6, ref7, ref8} \\
+Adjacent locators only:            \citemsp{ref3/3.1, ref4/e2.1, ref5/p42}
 
 
 % ═════════════════════════════════════════════════════════════════════════════
@@ -135,7 +132,7 @@ Upright: The field equations~\citemsp{ref3/3.2/e4.3} can be derived from a varia
 \textit{Italic: Hawking radiation~\citemsp{ref4/1/2} implies black holes are not truly black.}
 
 \medskip\noindent
-\textit{Italic with prefix: The stress-energy tensor~\citemsp{ref5/b21.1} is discussed in a self-contained box.}
+\textit{Italic with prefix: The ADM formalism~\citemsp{ref5/p520} decomposes spacetime into spatial hypersurfaces.}
 
 \medskip\noindent
 \textit{Italic with stacked locators: See~\citemsp{ref3/6.1/e4.3} for the derivation.}
@@ -179,7 +176,7 @@ Larger (0.50): \citemsp{ref3/6.1/e4.3}
 
 The Schwarzschild solution~\citemsp{ref2/1/3} was found shortly after the
 field equations~\citemsp{ref1} were published. A modern treatment can be
-found in standard textbooks~\citemsp{ref3/6.1/2, ref5/b21.1}, where the
+found in standard textbooks~\citemsp{ref3/6.1/2, ref5/p520}, where the
 derivation proceeds via the Birkhoff theorem~\citemsp{ref3/T6.2}. The
 singularity theorems~\citemsp{ref6, ref4/1/e4.3} later showed that
 gravitational collapse is generic. For further context
