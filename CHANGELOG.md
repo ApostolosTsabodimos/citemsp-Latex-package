@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased (2026-07-22)
+
+### Changed
+
+- **Sandbox consolidation.** Merged the six separate test files
+  (`sandbox.tex`, `test-compression.tex`, `test-overleaf.tex`,
+  `test-edges.tex`, `test-moving.tex`, `test-natbib.tex`) into two:
+  - `sandbox.tex` — unified biblatex test suite with 16 sections
+    covering plain citations, range compression, default and prefixed
+    locators, mixed entries, italic/slanted/bold-italic contexts, font
+    sizes, scaling, small caps, `\emph` toggle, math adjacency, theorem
+    and list environments, table cells, long locators, double-slash edge
+    cases, footnotes, and drop-in `\cite` replacement. Includes
+    switchable biblatex options (numeric-comp/numeric, biber/bibtex) via
+    commented lines for Overleaf-style testing.
+  - `test-natbib.tex` — kept separate because natbib is a fundamentally
+    different backend that cannot coexist with biblatex in one document.
+- **Reverted local v2.3 draft changes to `citemsp.sty`.** Restored the
+  released v2.2 source as the canonical `.sty` file.
+
 ## v2.2 (2026-07-13)
 
 Compatibility and robustness pass. The user-facing API

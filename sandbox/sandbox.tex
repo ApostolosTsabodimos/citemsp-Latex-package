@@ -1,187 +1,482 @@
+%% sandbox.tex — Unified test suite for the citemsp package (biblatex backend)
+%%
+%% Exercises every feature and edge case in a single document:
+%%   §1  Plain citations and range compression
+%%   §2  Default locators (section / paragraph)
+%%   §3  Built-in prefix locators
+%%   §4  Mixed locator types in a single call
+%%   §5  Range compression with mixed entries
+%%   §6  Italic, slanted, and bold-italic contexts
+%%   §7  Font size contexts
+%%   §8  Scaling (\citemspscale)
+%%   §9  Small caps and \emph toggle
+%%   §10 Math mode adjacency
+%%   §11 Theorem and list environments
+%%   §12 Table cells
+%%   §13 Long locator strings and many-key calls
+%%   §14 Double-slash / extra-slash edge cases
+%%   §15 Footnotes
+%%   §16 Drop-in \cite replacement and realistic text
+%%
+%% Build:  latexmk -pdf sandbox.tex
 \documentclass[11pt, a4paper]{article}
 
+\usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage[dvipsnames]{xcolor}
 \definecolor{linkblue}{rgb}{0.0, 0.2, 0.6}
+
+%%% BIBLATEX CONFIGURATION
+%%% Default: numeric-comp + biber (full compression).
+%%% Uncomment one of the alternatives to test other combinations.
+%% A) numeric-comp + biber (default — full compression)
 \usepackage[style=numeric-comp, backend=biber, sorting=none]{biblatex}
+%% B) numeric-comp + bibtex (compression, lighter backend)
+%\usepackage[style=numeric-comp, backend=bibtex, sorting=none]{biblatex}
+%% C) numeric + biber (no compression)
+%\usepackage[style=numeric, backend=biber]{biblatex}
+%% D) numeric + bibtex (no compression, lighter backend)
+%\usepackage[style=numeric, backend=bibtex]{biblatex}
 
 \begin{filecontents}{sandbox-refs.bib}
-@article{ref1, author={Einstein, Albert}, title={Die Feldgleichungen der Gravitation}, journal={Sitzungsberichte}, year={1915}}
-@article{ref2, author={Schwarzschild, Karl}, title={\"Uber das Gravitationsfeld eines Massenpunktes}, journal={Sitzungsberichte}, year={1916}}
-@book{ref3, author={Wald, Robert M.}, title={General Relativity}, publisher={Chicago}, year={1984}}
-@article{ref4, author={Hawking, Stephen W.}, title={Black hole explosions?}, journal={Nature}, year={1974}}
-@book{ref5, author={Misner, Charles W. and Thorne, Kip S. and Wheeler, John A.}, title={Gravitation}, publisher={Freeman}, year={1973}}
-@article{ref6, author={Penrose, Roger}, title={Gravitational collapse and space-time singularities}, journal={PRL}, year={1965}}
-@article{ref7, author={Kerr, Roy P.}, title={Gravitational field of a spinning mass}, journal={PRL}, year={1963}}
-@article{ref8, author={Chandrasekhar, S.}, title={The maximum mass of ideal white dwarfs}, journal={ApJ}, year={1931}}
-@article{ref9, author={Oppenheimer, J. Robert and Snyder, Hartland}, title={On continued gravitational contraction}, journal={PR}, year={1939}}
-@article{ref10, author={Friedmann, Alexander}, title={\"Uber die Kr\"ummung des Raumes}, journal={Zeitschrift f\"ur Physik}, year={1922}}
+@article{einstein1915,
+  author  = {Einstein, Albert},
+  title   = {Die Feldgleichungen der Gravitation},
+  journal = {Sitzungsberichte der Preussischen Akademie der Wissenschaften},
+  year    = {1915},
+  pages   = {844--847}
+}
+@article{schwarzschild1916,
+  author  = {Schwarzschild, Karl},
+  title   = {\"Uber das Gravitationsfeld eines Massenpunktes},
+  journal = {Sitzungsberichte},
+  year    = {1916}
+}
+@book{wald1984,
+  author    = {Wald, Robert M.},
+  title     = {General Relativity},
+  publisher = {University of Chicago Press},
+  year      = {1984}
+}
+@article{hawking1974,
+  author  = {Hawking, Stephen W.},
+  title   = {Black hole explosions?},
+  journal = {Nature},
+  volume  = {248},
+  pages   = {30--31},
+  year    = {1974}
+}
+@book{misner1973,
+  author    = {Misner, Charles W. and Thorne, Kip S. and Wheeler, John A.},
+  title     = {Gravitation},
+  publisher = {W. H. Freeman},
+  year      = {1973}
+}
+@article{penrose1965,
+  author  = {Penrose, Roger},
+  title   = {Gravitational Collapse and Space-Time Singularities},
+  journal = {Physical Review Letters},
+  volume  = {14},
+  pages   = {57--59},
+  year    = {1965}
+}
+@article{kerr1963,
+  author  = {Kerr, Roy P.},
+  title   = {Gravitational Field of a Spinning Mass},
+  journal = {Physical Review Letters},
+  volume  = {11},
+  pages   = {237--238},
+  year    = {1963}
+}
+@article{chandrasekhar1931,
+  author  = {Chandrasekhar, S.},
+  title   = {The Maximum Mass of Ideal White Dwarfs},
+  journal = {The Astrophysical Journal},
+  year    = {1931}
+}
+@article{oppenheimer1939,
+  author  = {Oppenheimer, J. Robert and Snyder, Hartland},
+  title   = {On Continued Gravitational Contraction},
+  journal = {Physical Review},
+  year    = {1939}
+}
+@article{friedmann1922,
+  author  = {Friedmann, Alexander},
+  title   = {\"Uber die Kr\"ummung des Raumes},
+  journal = {Zeitschrift f\"ur Physik},
+  year    = {1922}
+}
 \end{filecontents}
 \addbibresource{sandbox-refs.bib}
 
 \usepackage{citemsp}
-\usepackage[colorlinks=true, citecolor=linkblue, linkcolor=linkblue, urlcolor=linkblue]{hyperref}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,
+            citecolor=linkblue,
+            linkcolor=linkblue,
+            urlcolor=linkblue,
+            bookmarks=true]{hyperref}
 
-% ── Custom prefix registration (T, L, C, A are now built-in) ────────────────
-\citemspprefix{w}{w.}%       widget (arbitrary user prefix)
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+% Custom prefix registration
+\citemspprefix{w}{w.}%   widget (arbitrary user prefix)
 
 \begin{document}
 
-\section*{citemsp --- Full Feature Sandbox}
+\title{\texttt{citemsp} --- Unified Test Suite}
+\author{Sandbox}
+\date{\today}
+\maketitle
 
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{1. Plain citations and range compression}
-% ═════════════════════════════════════════════════════════════════════════════
+\tableofcontents
+\newpage
 
-\noindent
-\texttt{\textbackslash cite} baseline (5 consecutive): \cite{ref1,ref2,ref3,ref4,ref5} \\
-\texttt{\textbackslash citemsp} same keys:              \citemsp{ref1, ref2, ref3, ref4, ref5} \\[4pt]
-Non-consecutive (\texttt{\textbackslash cite}):         \cite{ref1,ref2,ref3,ref5,ref6,ref7} \\
-Non-consecutive (\texttt{\textbackslash citemsp}):      \citemsp{ref1, ref2, ref3, ref5, ref6, ref7} \\[4pt]
-All ten:   \citemsp{ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, ref10} \\
-Single:    \citemsp{ref3}
-
-
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{2. Default locators: section (\textsection) and paragraph (\textparagraph)}
-% ═════════════════════════════════════════════════════════════════════════════
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Plain citations and range compression}
+% ═══════════════════════════════════════════════════════════════════════════════
 
 \noindent
-Section only:              \citemsp{ref3/6.1} \\
-Section + paragraph:       \citemsp{ref3/6.1/2} \\
-Paragraph only (sub slot): \citemsp{ref3//5} \\
-Nested section number:     \citemsp{ref3/3.2.1} \\
-Deep subsection + para:    \citemsp{ref3/3.2.1/4}
+\texttt{\textbackslash cite} baseline (5 consecutive):
+\cite{einstein1915,schwarzschild1916,wald1984,hawking1974,misner1973} \\
+\texttt{\textbackslash citemsp} same keys:
+\citemsp{einstein1915, schwarzschild1916, wald1984, hawking1974, misner1973}
+
+\medskip\noindent
+Non-consecutive (\texttt{\textbackslash cite}):
+\cite{einstein1915,schwarzschild1916,wald1984,misner1973,penrose1965,kerr1963} \\
+Non-consecutive (\texttt{\textbackslash citemsp}):
+\citemsp{einstein1915, schwarzschild1916, wald1984, misner1973, penrose1965, kerr1963}
+
+\medskip\noindent
+All ten:
+\citemsp{einstein1915, schwarzschild1916, wald1984, hawking1974, misner1973,
+         penrose1965, kerr1963, chandrasekhar1931, oppenheimer1939, friedmann1922} \\
+Single: \citemsp{wald1984}
 
 
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{3. Built-in prefix locators}
-% ═════════════════════════════════════════════════════════════════════════════
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Default locators: section (\textsection) and paragraph (\textparagraph)}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\noindent
+Section only:              \citemsp{wald1984/6.1} \\
+Section + paragraph:       \citemsp{wald1984/6.1/2} \\
+Paragraph only (sub slot): \citemsp{wald1984//5} \\
+Nested section number:     \citemsp{wald1984/3.2.1} \\
+Deep subsection + para:    \citemsp{wald1984/3.2.1/4}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Built-in prefix locators}
+% ═══════════════════════════════════════════════════════════════════════════════
 
 Each built-in prefix in both the superscript and subscript slots:
 
 \medskip\noindent
 \begin{tabular}{llll}
 \textbf{Prefix} & \textbf{Type} & \textbf{In super slot} & \textbf{In sub slot} \\[2pt]
-\texttt{d} (definition) & $\triangleq$  & \citemsp{ref3/d5}        & \citemsp{ref3/3.2/d5} \\
-\texttt{e} (equation)   & eq.           & \citemsp{ref3/e4.3}      & \citemsp{ref3/3.2/e4.3} \\
-\texttt{f} (figure)     & fig.          & \citemsp{ref3/f3}        & \citemsp{ref3/6.1/f3} \\
-\texttt{n} (footnote)   & $\dagger$     & \citemsp{ref4/n7}        & \citemsp{ref4/1/n7} \\
-\texttt{p} (page)       & pp.           & \citemsp{ref3/p42}       & \citemsp{ref3/3.2/p42} \\
-\texttt{t} (table)      & $\boxplus$    & \citemsp{ref5/t2}        & \citemsp{ref5/8.4/t2} \\
-\end{tabular}
-
-
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{4. Built-in prefixes: theorem, lemma, corollary, appendix}
-% ═════════════════════════════════════════════════════════════════════════════
-
-Now built-in (no registration needed):
-
-\medskip\noindent
-\begin{tabular}{lll}
-\textbf{Prefix} & \textbf{Type} & \textbf{Output} \\[2pt]
-\texttt{T} (theorem)   & Th.  & \citemsp{ref3/T4.2}    \\
-\texttt{L} (lemma)     & Lem. & \citemsp{ref3/3.2/L1}  \\
-\texttt{C} (corollary) & Cor. & \citemsp{ref3/C3}      \\
-\texttt{A} (appendix)  & App. & \citemsp{ref3/A2}      \\
+\texttt{d} (definition) & $\triangleq$  & \citemsp{wald1984/d5}        & \citemsp{wald1984/3.2/d5} \\
+\texttt{e} (equation)   & eq.           & \citemsp{wald1984/e4.3}      & \citemsp{wald1984/3.2/e4.3} \\
+\texttt{f} (figure)     & fig.          & \citemsp{wald1984/f3}        & \citemsp{wald1984/6.1/f3} \\
+\texttt{n} (footnote)   & $\dagger$     & \citemsp{hawking1974/n7}     & \citemsp{hawking1974/1/n7} \\
+\texttt{p} (page)       & pp.           & \citemsp{wald1984/p42}       & \citemsp{wald1984/3.2/p42} \\
+\texttt{t} (table)      & $\boxplus$    & \citemsp{misner1973/t2}      & \citemsp{misner1973/8.4/t2} \\
+\texttt{T} (theorem)    & Th.           & \citemsp{wald1984/T4.2}      & \citemsp{wald1984/3.2/T1} \\
+\texttt{L} (lemma)      & Lem.          & \citemsp{wald1984/L1}        & \citemsp{wald1984/3.2/L1} \\
+\texttt{C} (corollary)  & Cor.          & \citemsp{wald1984/C3}        & \citemsp{wald1984/3.2/C3} \\
+\texttt{A} (appendix)   & App.          & \citemsp{wald1984/A2}        & \citemsp{wald1984/3.2/A2} \\
 \end{tabular}
 
 \medskip\noindent
-Custom prefix (registered with \verb|\citemspprefix{w}{w.}|): \citemsp{ref5/w7}
+Custom prefix (registered with \verb|\citemspprefix{w}{w.}|): \citemsp{misner1973/w7}
 
 \medskip\noindent
-Mixed built-in types: \citemsp{ref3/T4.2/e3.1}
+Mixed built-in types in both slots: \citemsp{wald1984/T4.2/e3.1}
 
 
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{5. Mixed locator types in a single call}
-% ═════════════════════════════════════════════════════════════════════════════
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Mixed locator types in a single call}
+% ═══════════════════════════════════════════════════════════════════════════════
 
 \noindent
-\verb|\citemsp{ref3/6.1/2, ref5/p520, ref4/1/e4.3}|\\
-Output: \citemsp{ref3/6.1/2, ref5/p520, ref4/1/e4.3}
+\verb|\citemsp{wald1984/6.1/2, misner1973/p520, hawking1974/1/e4.3}|\\
+Output: \citemsp{wald1984/6.1/2, misner1973/p520, hawking1974/1/e4.3}
 
 \medskip\noindent
-\verb|\citemsp{ref3/T4.2, ref1/3.2/d5, ref5/8.4/t2, ref7/p42}|\\
-Output: \citemsp{ref3/T4.2, ref1/3.2/d5, ref5/8.4/t2, ref7/p42}
+\verb|\citemsp{wald1984/T4.2, einstein1915/3.2/d5, misner1973/8.4/t2, kerr1963/p42}|\\
+Output: \citemsp{wald1984/T4.2, einstein1915/3.2/d5, misner1973/8.4/t2, kerr1963/p42}
 
 
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{6. Range compression with mixed entries}
-% ═════════════════════════════════════════════════════════════════════════════
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Range compression with mixed entries}
+% ═══════════════════════════════════════════════════════════════════════════════
 
 \noindent
-Range then locator:                \citemsp{ref1, ref2, ref3, ref4/3.2} \\
-Locator then range:                \citemsp{ref1/3.2, ref2, ref3, ref4, ref5} \\
-Plain, locator, range:             \citemsp{ref1, ref2/3.2, ref3, ref4, ref5} \\
-Range, locator, range:             \citemsp{ref1, ref2, ref3, ref4/e2.1, ref5, ref6, ref7} \\
-Two locators between ranges:       \citemsp{ref1, ref2, ref3, ref4/3.1, ref5/p23, ref6, ref7, ref8} \\
-Adjacent locators only:            \citemsp{ref3/3.1, ref4/e2.1, ref5/p42}
+Range then locator:
+\citemsp{einstein1915, schwarzschild1916, wald1984, hawking1974/3.2} \\
+Locator then range:
+\citemsp{einstein1915/3.2, schwarzschild1916, wald1984, hawking1974, misner1973} \\
+Plain, locator, range:
+\citemsp{einstein1915, schwarzschild1916/3.2, wald1984, hawking1974, misner1973} \\
+Range, locator, range:
+\citemsp{einstein1915, schwarzschild1916, wald1984, hawking1974/e2.1,
+         misner1973, penrose1965, kerr1963} \\
+Two locators between ranges:
+\citemsp{einstein1915, schwarzschild1916, wald1984,
+         hawking1974/3.1, misner1973/p23,
+         penrose1965, kerr1963, chandrasekhar1931} \\
+Adjacent locators only:
+\citemsp{wald1984/3.1, hawking1974/e2.1, misner1973/p42}
 
 
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{7. Italic context (automatic kern adjustment)}
-% ═════════════════════════════════════════════════════════════════════════════
-
-\noindent
-Upright: The field equations~\citemsp{ref3/3.2/e4.3} can be derived from a variational principle.
-
-\medskip\noindent
-\textit{Italic: Hawking radiation~\citemsp{ref4/1/2} implies black holes are not truly black.}
-
-\medskip\noindent
-\textit{Italic with prefix: The ADM formalism~\citemsp{ref5/p520} decomposes spacetime into spatial hypersurfaces.}
-
-\medskip\noindent
-\textit{Italic with stacked locators: See~\citemsp{ref3/6.1/e4.3} for the derivation.}
-
-
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{8. Scaling: \texttt{\textbackslash citemspscale}}
-% ═════════════════════════════════════════════════════════════════════════════
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Italic, slanted, and bold-italic contexts}
+% ═══════════════════════════════════════════════════════════════════════════════
 
 \noindent
-Default scale (0.35): \citemsp{ref3/6.1/e4.3}
+Upright: The field equations~\citemsp{wald1984/3.2/e4.3} can be derived from
+a variational principle.
+
+\medskip\noindent
+\textit{Italic: Hawking radiation~\citemsp{hawking1974/1/2} implies black holes
+are not truly black.}
+
+\medskip\noindent
+\textit{Italic with prefix: The ADM formalism~\citemsp{misner1973/p520}
+decomposes spacetime into spatial hypersurfaces.}
+
+\medskip\noindent
+\textit{Italic with stacked locators: See~\citemsp{wald1984/6.1/e4.3} for the
+derivation.}
+
+\medskip\noindent
+\textsl{Slanted: See the derivation~\citemsp{wald1984/3.2/e4.3} in the text.}
+
+\medskip\noindent
+\textbf{\textit{Bold italic: the metric tensor~\citemsp{wald1984/3.1/e3.4}
+satisfies the symmetry.}}
+
+\medskip\noindent
+\textit{\textbf{Italic then bold: the metric tensor~\citemsp{wald1984/3.1/e3.4}
+satisfies the symmetry.}}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Font size contexts}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+Each size command wraps \verb|\citemsp{wald1984/6.1/2}|:
+
+\medskip\noindent
+{\tiny         \texttt{tiny}:         \citemsp{wald1984/6.1/2} Lorem ipsum.}\\[2pt]
+{\scriptsize   \texttt{scriptsize}:   \citemsp{wald1984/6.1/2} Lorem ipsum.}\\[2pt]
+{\footnotesize \texttt{footnotesize}: \citemsp{wald1984/6.1/2} Lorem ipsum.}\\[2pt]
+{\small        \texttt{small}:        \citemsp{wald1984/6.1/2} Lorem ipsum.}\\[2pt]
+{\normalsize   \texttt{normalsize}:   \citemsp{wald1984/6.1/2} Lorem ipsum.}\\[2pt]
+{\large        \texttt{large}:        \citemsp{wald1984/6.1/2} Lorem ipsum.}\\[2pt]
+{\Large        \texttt{Large}:        \citemsp{wald1984/6.1/2} Lorem ipsum.}\\[2pt]
+{\LARGE        \texttt{LARGE}:        \citemsp{wald1984/6.1/2} Lorem ipsum.}\\[2pt]
+{\huge         \texttt{huge}:         \citemsp{wald1984/6.1/2} Lorem ipsum.}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Scaling: \texttt{\textbackslash citemspscale}}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\noindent
+Default scale (0.35): \citemsp{wald1984/6.1/e4.3}
 
 {%
 \renewcommand{\citemspscale}{0.25}%
-Smaller (0.25): \citemsp{ref3/6.1/e4.3}
+Smaller (0.25): \citemsp{wald1984/6.1/e4.3}
 }
 
 {%
 \renewcommand{\citemspscale}{0.50}%
-Larger (0.50): \citemsp{ref3/6.1/e4.3}
+Larger (0.50): \citemsp{wald1984/6.1/e4.3}
 }
 
 
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{9. Drop-in \texttt{\textbackslash cite} replacement}
-% ═════════════════════════════════════════════════════════════════════════════
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Small caps and \texttt{\textbackslash emph} toggle}
+% ═══════════════════════════════════════════════════════════════════════════════
 
 \noindent
-\texttt{\textbackslash citemsp} with no slashes behaves like \texttt{\textbackslash cite}:
+\textsc{Small caps: The Birkhoff theorem~\citemsp{wald1984/T6.2} is a
+cornerstone of GR.}
 
 \medskip\noindent
-\verb|\cite{ref3}| $\longrightarrow$ \cite{ref3} \\
-\verb|\citemsp{ref3}| $\longrightarrow$ \citemsp{ref3} \\[4pt]
-\verb|\cite{ref1,ref2,ref3,ref4,ref5}| $\longrightarrow$ \cite{ref1,ref2,ref3,ref4,ref5} \\
-\verb|\citemsp{ref1, ref2, ref3, ref4, ref5}| $\longrightarrow$ \citemsp{ref1, ref2, ref3, ref4, ref5}
+Upright: \emph{The metric~\citemsp{wald1984/3.1} is a fundamental object.}
+
+\medskip\noindent
+\textit{Italic outer: \emph{upright inner~\citemsp{wald1984/3.2/e3.4}} with
+toggled shape.}
+
+\medskip\noindent
+\textit{Italic: The curvature~\citemsp{wald1984/3.2/e3.4} satisfies the
+Bianchi identity. Inside it: \emph{the Riemann
+tensor~\citemsp{wald1984/3.2}} is antisymmetric.}
 
 
-% ═════════════════════════════════════════════════════════════════════════════
-\subsection*{10. Realistic usage in running text}
-% ═════════════════════════════════════════════════════════════════════════════
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Math mode adjacency}
+% ═══════════════════════════════════════════════════════════════════════════════
 
-The Schwarzschild solution~\citemsp{ref2/1/3} was found shortly after the
-field equations~\citemsp{ref1} were published. A modern treatment can be
-found in standard textbooks~\citemsp{ref3/6.1/2, ref5/p520}, where the
-derivation proceeds via the Birkhoff theorem~\citemsp{ref3/T6.2}. The
-singularity theorems~\citemsp{ref6, ref4/1/e4.3} later showed that
+The citation should survive adjacent math without mode-switch errors.
+
+\medskip\noindent
+$E = mc^2$~\citemsp{einstein1915/3.2}
+
+\medskip\noindent
+\citemsp{einstein1915/e1}~implies $G_{\mu\nu} = 8\pi T_{\mu\nu}$.
+
+\medskip\noindent
+Between two math spans:
+$\nabla_\mu T^{\mu\nu}=0$~\citemsp{wald1984/4.3/e4.3}~gives
+$\dot\rho + 3H(\rho+p)=0$.
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Theorem and list environments}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[Birkhoff \citemsp{wald1984/T6.2}]
+  Every spherically symmetric solution of the vacuum Einstein field equations
+  is isometric to the Schwarzschild metric~\citemsp{wald1984/6.1/e6.1}.
+\end{theorem}
+
+\begin{lemma}
+  The area of the event horizon is
+  non-decreasing~\citemsp{hawking1974/1/e2}.
+\end{lemma}
+
+\subsection*{Itemize}
+
+\begin{itemize}
+  \item The field equations~\citemsp{einstein1915} were derived in 1915.
+  \item The Schwarzschild solution~\citemsp{wald1984/6.1/2} followed shortly.
+  \item Gravitational waves are a prediction of linearised
+        GR~\citemsp{misner1973/p35.1}.
+\end{itemize}
+
+\subsection*{Description}
+
+\begin{description}
+  \item[Singularity theorems] proved by
+    Penrose~\citemsp{penrose1965/T1} and others.
+  \item[Hawking radiation] derived
+    in~\citemsp{hawking1974/e1/n2}.
+  \item[Kerr metric]
+    see~\citemsp{kerr1963/3.2}.
+\end{description}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Table cells}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\medskip\noindent
+\begin{tabular}{lll}
+  \toprule
+  \textbf{Source}         & \textbf{Year} & \textbf{Citation} \\
+  \midrule
+  Field equations         & 1915          & \citemsp{einstein1915/3.2} \\
+  General Relativity book & 1984          & \citemsp{wald1984/6.1/2} \\
+  Gravitational collapse  & 1965          & \citemsp{penrose1965/T1} \\
+  Hawking radiation       & 1974          & \citemsp{hawking1974/e1} \\
+  \bottomrule
+\end{tabular}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Long locator strings and many-key calls}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+Deep hierarchical section number: \citemsp{wald1984/12.3.4.5}
+
+\medskip\noindent
+Both slots with a long equation number: \citemsp{wald1984/12.3.4.5/e99.999}
+
+\medskip\noindent
+Long page reference: \citemsp{misner1973/p1279}
+
+\medskip\noindent
+Six keys mixing plain and locators:
+\citemsp{wald1984/6.1/2, einstein1915, hawking1974, misner1973/p520,
+         penrose1965, kerr1963/3.2}
+
+\medskip\noindent
+Six keys, all plain (maximum compression):
+\citemsp{wald1984, einstein1915, hawking1974, misner1973, penrose1965, kerr1963}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Double-slash / extra-slash edge cases}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+The parser is \verb|\@citemsp@parse#1/#2/#3/#4\@nil|; extra slashes may land
+in \verb|#4| (discarded) or produce empty tokens in \verb|#2|/\verb|#3|.
+
+\medskip\noindent
+\textbf{Empty second field (subscript-only):}
+\verb|\citemsp{wald1984//5}| $\to$ \citemsp{wald1984//5}
+
+\medskip\noindent
+\textbf{Three slashes (key + empty sec + empty par + trailing):}
+\verb|\citemsp{wald1984///}| $\to$ \citemsp{wald1984///}
+
+\medskip\noindent
+\textbf{Four-part with trailing slash (extra slash in \#4):}
+\verb|\citemsp{wald1984/6.1/2/extra}| $\to$ \citemsp{wald1984/6.1/2/extra}
+
+\medskip\noindent
+\textbf{Only slashes, no key (degenerate):}
+\verb|\citemsp{///}| $\to$ \citemsp{///}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Footnotes}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+Here is a running-text reference.\footnote{See~\citemsp{wald1984/3.2} for
+the full derivation, and also~\citemsp{hawking1974/1} for the original
+energy-condition argument.}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Drop-in \texttt{\textbackslash cite} replacement and realistic text}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\texttt{\textbackslash citemsp} with no slashes behaves like
+\texttt{\textbackslash cite}:
+
+\medskip\noindent
+\verb|\cite{wald1984}| $\longrightarrow$ \cite{wald1984} \\
+\verb|\citemsp{wald1984}| $\longrightarrow$ \citemsp{wald1984} \\[4pt]
+\verb|\cite{einstein1915,...,misner1973}| $\longrightarrow$
+\cite{einstein1915,schwarzschild1916,wald1984,hawking1974,misner1973} \\
+\verb|\citemsp{einstein1915,...,misner1973}| $\longrightarrow$
+\citemsp{einstein1915, schwarzschild1916, wald1984, hawking1974, misner1973}
+
+\bigskip\noindent
+\textbf{Realistic paragraph:}
+The Schwarzschild solution~\citemsp{schwarzschild1916/1/3} was found shortly
+after the field equations~\citemsp{einstein1915} were published. A modern
+treatment can be found in standard
+textbooks~\citemsp{wald1984/6.1/2, misner1973/p520}, where the derivation
+proceeds via the Birkhoff theorem~\citemsp{wald1984/T6.2}. The singularity
+theorems~\citemsp{penrose1965, hawking1974/1/e4.3} later showed that
 gravitational collapse is generic. For further context
-see~\citemsp{ref7, ref8, ref9, ref10}.
+see~\citemsp{kerr1963, chandrasekhar1931, oppenheimer1939, friedmann1922}.
 
+
+% ═══════════════════════════════════════════════════════════════════════════════
 \printbibliography
+% ═══════════════════════════════════════════════════════════════════════════════
 
 \end{document}

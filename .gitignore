@@ -15,17 +15,18 @@
 # filecontents-generated bib files
 refs-citemsp.bib
 sandbox-refs.bib
-overleaf-refs.bib
-test-refs.bib
 
 # CTAN build
 _ctan/
 citemsp.zip
 
 # Synced .sty copies (canonical source is root citemsp.sty)
-citemsp/citemsp.sty
+CTAN/citemsp.sty
 paper/citemsp.sty
 sandbox/citemsp.sty
 
 # Compiled PDFs in sandbox (test artifacts, not tracked)
 sandbox/*.pdf
+
+# Archive (local only, not shipped)
+archive/
