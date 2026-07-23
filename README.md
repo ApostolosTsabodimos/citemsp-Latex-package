@@ -46,14 +46,14 @@ type from the registry below.
 |--------|------------|--------|
 | `A`    | Appendix   | App.   |
 | `C`    | Corollary  | Cor.   |
+| `L`    | Lemma      | Lem.   |
+| `T`    | Theorem    | Th.    |
 | `d`    | Definition | ≜      |
 | `e`    | Equation   | eq.    |
 | `f`    | Figure     | fig.   |
-| `L`    | Lemma      | Lem.   |
 | `n`    | Footnote   | †      |
 | `p`    | Page       | pp.    |
 | `t`    | Table      | ⊞      |
-| `T`    | Theorem    | Th.    |
 
 Register custom prefixes with `\citemspprefix{letter}{label}`.
 
