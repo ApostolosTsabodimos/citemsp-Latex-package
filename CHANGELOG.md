@@ -1,24 +1,40 @@
 # Changelog
 
-## Unreleased (2026-07-22)
+## v2.3 (2026-07-22)
+
+### Added
+
+- **Slanted font detection.** The locator renderer now detects slanted
+  (`\textsl`) font shape in addition to italic (`\textit`), applying
+  the same kerning adjustment to both.
+- **Configurable raisebox offset.** New `\citemspraiseoffset` command
+  (default 1.5pt) lets users tune the vertical offset of superscript
+  locators via `\renewcommand`.
 
 ### Changed
 
-- **Sandbox consolidation.** Merged the six separate test files
-  (`sandbox.tex`, `test-compression.tex`, `test-overleaf.tex`,
-  `test-edges.tex`, `test-moving.tex`, `test-natbib.tex`) into two:
-  - `sandbox.tex` — unified biblatex test suite with 16 sections
-    covering plain citations, range compression, default and prefixed
-    locators, mixed entries, italic/slanted/bold-italic contexts, font
-    sizes, scaling, small caps, `\emph` toggle, math adjacency, theorem
-    and list environments, table cells, long locators, double-slash edge
-    cases, footnotes, and drop-in `\cite` replacement. Includes
-    switchable biblatex options (numeric-comp/numeric, biber/bibtex) via
-    commented lines for Overleaf-style testing.
-  - `test-natbib.tex` — kept separate because natbib is a fundamentally
-    different backend that cannot coexist with biblatex in one document.
-- **Reverted local v2.3 draft changes to `citemsp.sty`.** Restored the
-  released v2.2 source as the canonical `.sty` file.
+- **Namespace consolidation.** All internal macros renamed from
+  `@citesp@` to `@citemsp@` for consistency with the package name.
+- **Removed amssymb dependency.** The package no longer loads `amssymb`.
+  Fallback definitions are provided via `\providecommand` for
+  `\triangleq`, `\boxplus`, and `\square`. Loading `amssymb` is
+  recommended for best glyph quality but not required.
+- **Idiomatic math anchors.** Replaced `\mbox{}` with `{}` in
+  math-mode super/subscript anchors.
+- **Safer key expansion.** Uses `\unexpanded{#1}` in the `\edef`
+  accumulator for plain-key batching.
+- **Removed `\citesize` alias.** First CTAN release; no installed base.
+- **Copyright year.** Updated to 2025--2026.
+- **File manifest.** Updated to list all five distributed files.
+- **Documentation overhaul.** Comprehensive rewrite with all ten
+  prefixes, comparison table, natbib section, limitations,
+  compatibility matrix, subscript-only examples, font context demos,
+  and non-physics examples.
+
+### Sandbox
+
+- Merged six separate test files into two (`sandbox.tex` for biblatex,
+  `test-natbib.tex` for natbib).
 
 ## v2.2 (2026-07-13)
 

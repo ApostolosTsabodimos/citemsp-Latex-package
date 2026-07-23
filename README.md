@@ -34,9 +34,9 @@ is the subscript (default ¶). A leading single letter selects a prefix
 type from the registry below.
 
 ```latex
-\citemsp{wald1984/6.1/2}          % [1] with §6.1 (super) and ¶2 (sub)
-\citemsp{wald1984/3.2/e4.3}       % [1] with §3.2 (super) and eq.4.3 (sub)
-\citemsp{mtw1973/p520}            % [2] with pp.520 (super)
+\citemsp{smith2003/6.1/2}          % [1] with §6.1 (super) and ¶2 (sub)
+\citemsp{smith2003/3.2/e4.3}       % [1] with §3.2 (super) and eq.4.3 (sub)
+\citemsp{wang2020/p520}            % [2] with pp.520 (super)
 \citemsp{a, b/2.1, c/3/e4}        % comma-separated multi-key list
 ```
 
@@ -74,7 +74,7 @@ Register custom prefixes with `\citemspprefix{letter}{label}`.
 ├── citemsp.sty          Package source (single copy, used by all subdirectories)
 ├── Makefile             Build docs/paper/sandbox, package CTAN zip
 │
-├── citemsp/             CTAN submission
+├── CTAN/                CTAN submission
 │   ├── citemsp-doc.tex      Package documentation source
 │   ├── citemsp-doc.pdf      Compiled documentation
 │   ├── README.md            CTAN readme
@@ -85,9 +85,8 @@ Register custom prefixes with `\citemspprefix{letter}{label}`.
 │   └── citemsp-paper.pdf    Compiled paper
 │
 ├── sandbox/             Development and compatibility testing
-│   ├── sandbox.tex          Main test document
-│   ├── test-overleaf.tex    Overleaf compatibility tests
-│   └── test-compression.tex Compression (numeric-comp) tests
+│   ├── sandbox.tex          Unified biblatex test suite
+│   └── test-natbib.tex      Natbib backend test
 │
 ├── CHANGELOG.md        Version history
 ├── ROADMAP.md

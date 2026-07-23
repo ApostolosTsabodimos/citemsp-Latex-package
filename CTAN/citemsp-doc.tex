@@ -1,0 +1,926 @@
+%%
+%% citemsp-doc.tex — Documentation for the citemsp package
+%%
+%% Copyright (c) 2025--2026 Apostolos Tsampodimos
+%% LPPL 1.3c — see LICENSE for details
+%%
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[dvipsnames, table]{xcolor}
+\definecolor{linkblue}{rgb}{0.0, 0.2, 0.6}
+\definecolor{linkred}{rgb}{0.7, 0.13, 0.13}
+\usepackage{amssymb}
+\usepackage[style=numeric, backend=biber]{biblatex}
+\usepackage{citemsp}
+\usepackage[colorlinks=true, citecolor=linkblue, linkcolor=linkred, urlcolor=linkblue]{hyperref}
+\usepackage{tcolorbox}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{orcidlink}
+\usepackage{fontawesome5}
+\usepackage{enumitem}
+
+% ── Helpers ───────────────────────────────────────────────────────────────────
+\newcommand{\githublink}[1]{\href{https://github.com/ApostolosTsabodimos/citemsp-Latex-package}{\faGithub}}
+\newcommand{\pkg}[1]{\texttt{#1}}
+\newcommand{\cmd}[1]{\texttt{\textbackslash #1}}
+
+% ── Example bibliography ─────────────────────────────────────────────────────
+\begin{filecontents}[force]{refs-citemsp.bib}
+@article{upper1974,
+  author  = {Upper, Dennis},
+  title   = {The Unsuccessful Self-Treatment of a Case of ``Writer's Block''},
+  journal = {Journal of Applied Behavior Analysis},
+  volume  = {7},
+  number  = {3},
+  pages   = {497},
+  year    = {1974},
+  doi     = {10.1901/jaba.1974.7-497a}
+}
+@article{pennycook2015,
+  author  = {Pennycook, Gordon and Cheyne, James Allan and Barr, Nathaniel
+             and Koehler, Derek J. and Fugelsang, Jonathan A.},
+  title   = {On the Reception and Detection of Pseudo-Profound Bullshit},
+  journal = {Judgment and Decision Making},
+  volume  = {10},
+  number  = {6},
+  pages   = {549--563},
+  year    = {2015},
+  doi     = {10.1017/S1930297500006999}
+}
+@article{smith2003,
+  author  = {Smith, Gordon C. S. and Pell, Jill P.},
+  title   = {Parachute Use to Prevent Death and Major Trauma Related to
+             Gravitational Challenge: Systematic Review of Randomised
+             Controlled Trials},
+  journal = {BMJ},
+  volume  = {327},
+  pages   = {1459--1461},
+  year    = {2003},
+  doi     = {10.1136/bmj.327.7429.1459}
+}
+@article{meyerrochow2003,
+  author  = {Meyer-Rochow, Victor Benno and Gal, J\'ozsef},
+  title   = {Pressures Produced When Penguins Pooh --- Calculations on
+             Avian Defaecation},
+  journal = {Polar Biology},
+  volume  = {27},
+  pages   = {56--58},
+  year    = {2003},
+  doi     = {10.1007/s00300-003-0563-3}
+}
+@article{wang2020,
+  author  = {Wang, Liming and Sofer, Zden\v{e}k and Pumera, Martin},
+  title   = {Will Any Crap We Put into Graphene Increase Its
+             Electrocatalytic Effect?},
+  journal = {ACS Nano},
+  volume  = {14},
+  number  = {1},
+  pages   = {21--25},
+  year    = {2020},
+  doi     = {10.1021/acsnano.9b00184}
+}
+@article{cox1979,
+  author  = {Cox, David A. and Zucker, Steven},
+  title   = {Intersection Numbers of Sections of Elliptic Surfaces},
+  journal = {Inventiones Mathematicae},
+  volume  = {53},
+  pages   = {1--44},
+  year    = {1979},
+  doi     = {10.1007/BF01403189}
+}
+@article{zongker2006,
+  author  = {Zongker, Doug},
+  title   = {Chicken Chicken Chicken: Chicken Chicken},
+  journal = {Annals of Improbable Research},
+  volume  = {12},
+  number  = {5},
+  pages   = {16--21},
+  year    = {2006},
+  url     = {https://isotropic.org/papers/chicken.pdf}
+}
+@article{ghirlanda2002,
+  author  = {Ghirlanda, Stefano and Jansson, Liselotte and Enquist, Magnus},
+  title   = {Chickens Prefer Beautiful Humans},
+  journal = {Human Nature},
+  volume  = {13},
+  number  = {3},
+  pages   = {383--389},
+  year    = {2002},
+  doi     = {10.1007/s12110-002-1021-6}
+}
+@article{matthews1995,
+  author  = {Matthews, Robert A. J.},
+  title   = {Tumbling Toast, {M}urphy's Law and the Fundamental Constants},
+  journal = {European Journal of Physics},
+  volume  = {16},
+  number  = {4},
+  pages   = {172--176},
+  year    = {1995},
+  doi     = {10.1088/0143-0807/16/4/005}
+}
+@article{camposarceiz2009,
+  author  = {Campos-Arceiz, Ahimsa},
+  title   = {Shit Happens (to be Useful)! {U}se of Elephant Dung as
+             Habitat by Amphibians},
+  journal = {Biotropica},
+  volume  = {41},
+  number  = {4},
+  pages   = {406--407},
+  year    = {2009},
+  doi     = {10.1111/j.1744-7429.2009.00525.x}
+}
+@article{yap2022,
+  author  = {Yap, Te Faye and Liu, Zhen and Rajappan, Anoop and
+             Shimokusu, Trevor J. and Preston, Daniel J.},
+  title   = {Necrobotics: Biotic Materials as Ready-to-Use Actuators},
+  journal = {Advanced Science},
+  volume  = {9},
+  pages   = {2201174},
+  year    = {2022},
+  doi     = {10.1002/advs.202201174}
+}
+@article{lazebnik2002,
+  author  = {Lazebnik, Yuri},
+  title   = {Can a Biologist Fix a Radio? --- Or, What {I} Learned While
+             Studying Apoptosis},
+  journal = {Cancer Cell},
+  volume  = {2},
+  number  = {3},
+  pages   = {179--182},
+  year    = {2002},
+  doi     = {10.1016/S1535-6108(02)00133-2}
+}
+@article{mayer2012,
+  author  = {Mayer, Hans C. and Krechetnikov, Rouslan},
+  title   = {Walking with Coffee: Why Does It Spill?},
+  journal = {Physical Review E},
+  volume  = {85},
+  pages   = {046117},
+  year    = {2012},
+  doi     = {10.1103/PhysRevE.85.046117}
+}
+\end{filecontents}
+\addbibresource{refs-citemsp.bib}
+
+% ── Title ─────────────────────────────────────────────────────────────────────
+\title{\textbf{\pkg{citemsp} Package}\\[4pt]
+  \large Per-Key Citation Locators\\[4pt]
+  \normalsize v2.3 --- \today}
+
+\author[1]{Apostolos Tsampodimos\,\,\githublink{}\,\,\orcidlink{0009-0001-0230-5647}}
+\author[2]{Nathaniel Sherrill}
+\author[2]{Agnese Mariotti}
+
+\affil[1]{Center for Physical Sciences and Technology\\
+Saul\.etekio~3, 10257 Vilnius, Lithuania\\
+\texttt{apostolos.tsampodimos@ftmc.lt}}
+\affil[2]{Institute for Theoretical Physics, Leibniz Universit\"at Hannover\\
+Appelstra\ss e~2, 30167 Hannover, Germany}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+The \pkg{citemsp} package provides a single user-facing command, \cmd{citemsp}, that attaches section~(\S), paragraph~(\P), and prefix-based locators directly to numeric citation labels. It works on top of either \pkg{biblatex} or \pkg{natbib}, auto-detecting which backend is loaded. An extensible prefix registry provides, currently, ten built-in types and users can register custom prefixes with \cmd{citemspprefix}. The package parses a slash-delimited syntax, rendering each locator as a superscript/subscript pair on the corresponding citation number, producing output such as~\citemsp{smith2003/3.2/5, wang2020/p520, meyerrochow2003/1/e4.3}. Plain entries (no slashes) are batched and passed to the backend's native \cmd{cite}, so range compression (\pkg{numeric-comp}, \texttt{sort\&compress}) works naturally.
+\end{abstract}
+
+%\tableofcontents
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Motivation}
+% ══════════════════════════════════════════════════════════════════════════════
+
+The \pkg{biblatex} package offers a locator interface through its postnote
+field.  A user can write \verb|\autocite[§3.2]{smith2003}| to append a
+free-form locator after the citation number.  For multi-key citations,
+\verb|\autocites| accepts per-key pre- and post-notes:
+%
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\autocites[§3.2]{smith2003}[¶2]{meyerrochow2003}
+\end{verbatim}
+\end{tcolorbox}
+%
+\noindent This approach has two limitations when writing a scientific paper:
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{Verbose syntax.}  Citing three sources with locators
+    requires nested optional arguments, which is cumbersome in source files.
+  \item \textbf{No typed locators.}  There is no compact notation for
+    referencing specific equations, figures, definitions, or theorems within
+    cited works.
+\end{enumerate}
+
+\noindent The \pkg{citemsp} package renders locators as a
+superscript/subscript pair attached to the citation number, supports ten
+built-in prefix types via an extensible registry, and accepts all keys with
+their locators in a single comma-separated argument.  It supports both
+\pkg{biblatex} and \pkg{natbib} backends.
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Installation}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Per-project}
+
+Copy \texttt{citemsp.sty} into the same directory as your main
+\texttt{.tex} file.
+
+\subsection{System-wide (local texmf)}
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+mkdir -p ~/texmf/tex/latex/citemsp
+cp citemsp.sty ~/texmf/tex/latex/citemsp/
+texhash ~/texmf
+\end{verbatim}
+\end{tcolorbox}
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Usage}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Loading with biblatex}
+
+The package must be loaded \emph{after} \pkg{biblatex}:
+%
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\usepackage[style=numeric, backend=biber]{biblatex}
+\addbibresource{refs.bib}
+\usepackage{citemsp}
+\end{verbatim}
+\end{tcolorbox}
+
+\subsection{Loading with natbib}
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\usepackage[numbers]{natbib}   % omit if your class loads it
+\usepackage{citemsp}
+\end{verbatim}
+\end{tcolorbox}
+%
+\noindent Classes that auto-load \pkg{natbib} (e.g., \pkg{revtex4-2},
+\pkg{aastex631}) require no explicit \verb|\usepackage{natbib}|.
+Loading \pkg{citemsp} before either backend produces a package error.
+
+\subsection{Syntax}
+
+The \cmd{citemsp} command accepts a comma-separated list of entries.
+Each entry has the form \texttt{key}, \texttt{key/loc1}, or
+\texttt{key/loc1/loc2}.  By default, the first slot renders as
+\S\ (section) and the second as \P\ (paragraph).  A single-letter prefix
+changes the locator type:
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{tabular*}{\dimexpr\linewidth-0pt}{@{}l@{\extracolsep{\fill}}c@{\quad}l@{}}
+\texttt{\textbackslash citemsp\{key\}}
+  & $\longrightarrow$ & \citemsp{smith2003}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section\}}
+  & $\longrightarrow$ & \citemsp{smith2003/6.2}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section/paragraph\}}
+  & $\longrightarrow$ & \citemsp{smith2003/6.2/3}\\[3pt]
+\texttt{\textbackslash citemsp\{key//paragraph\}}
+  & $\longrightarrow$ & \citemsp{smith2003//3}\\[3pt]
+\texttt{\textbackslash citemsp\{key/section/e4.3\}}
+  & $\longrightarrow$ & \citemsp{smith2003/6.2/e4.3}
+\end{tabular*}
+\end{tcolorbox}
+
+\noindent Note the subscript-only form \texttt{key//par}: an empty first
+slot with a double slash gives a paragraph (or prefixed) subscript without
+a section superscript.
+
+
+\subsection{Prefix registry}
+
+All ten built-in prefixes are listed below. Note that no prefix defaults to \S\ (section) in the superscript slot and \P\ (paragraph) in the subscript slot. A prefix is a single letter at the start of a locator slot that selects a symbol:
+
+\begin{table}[h]
+\centering
+\rowcolors{2}{blue!3}{white}
+\begin{tabular}{c l l c c c}
+\toprule
+\rowcolor{blue!15}
+\textbf{Prefix} & \textbf{Locator} & \textbf{Render} & \textbf{In super slot} & \textbf{In sub slot} & \textbf{Both slots} \\
+\midrule
+\texttt{A} & Appendix    & App.          & \citemsp{smith2003/A2}        & \citemsp{smith2003//A2}         & \citemsp{smith2003/3.2/A2} \\
+\texttt{C} & Corollary   & Cor.          & \citemsp{smith2003/C3}        & \citemsp{smith2003//C3}      & \citemsp{smith2003/4.1/C3} \\
+\texttt{L} & Lemma       & Lem.          & \citemsp{smith2003/L1}        & \citemsp{smith2003//L1}      & \citemsp{smith2003/3.2/L1} \\
+\texttt{T} & Theorem     & Th.           & \citemsp{smith2003/T4.2}      & \citemsp{smith2003//T4.2}    & \citemsp{smith2003/6.1/T4.2} \\
+\texttt{d} & Definition  & $\triangleq$  & \citemsp{smith2003/d5}        & \citemsp{smith2003//d5}      & \citemsp{smith2003/3.2/d5} \\
+\texttt{e} & Equation    & eq.           & \citemsp{smith2003/e4.3}      & \citemsp{smith2003//e4.3}    & \citemsp{smith2003/6.2/e4.3} \\
+\texttt{f} & Figure      & fig.          & \citemsp{smith2003/f3}        & \citemsp{smith2003//f3}      & \citemsp{smith2003/6.1/f3} \\
+\texttt{n} & Footnote    & $\dagger$     & \citemsp{meyerrochow2003/n7}     & \citemsp{meyerrochow2003//n7}     & \citemsp{meyerrochow2003/1/n7} \\
+\texttt{p} & Page        & pp.           & \citemsp{smith2003/p42}       & \citemsp{smith2003//p42}     & \citemsp{smith2003/3.2/p42} \\
+\texttt{t} & Table       & $\boxplus$    & \citemsp{wang2020/t2}         & \citemsp{wang2020//t2}       & \citemsp{wang2020/8.4/t2} \\
+\bottomrule
+\end{tabular}
+\caption{Built-in prefix registry.}
+\label{tab:prefixes}
+\end{table}
+
+
+\noindent Users can register custom prefixes with \cmd{citemspprefix}.
+Place the command in the preamble (after \verb|\usepackage{citemsp}|) so
+it is available throughout the document:
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\usepackage{citemsp}
+\citemspprefix{R}{Rem.}         "R" renders as "Rem."
+\citemspprefix{w}{w.}           "w" renders as "w."
+\end{verbatim}
+\end{tcolorbox}
+
+\citemspprefix{R}{Rem.}%
+\noindent For example, after registering \texttt{R} for ``Remark'':
+\verb|\citemsp{cox1979/12.4/R3}| $\longrightarrow$ \citemsp{cox1979/12.4/R3},\enspace
+and after registering \texttt{w} for ``widget'':
+\verb|\citemsp{zongker2006/3/w5}| $\longrightarrow$ \citemsp{zongker2006/3/w5}.\enspace
+The prefix letter must not collide with an existing built-in prefix.
+
+\subsection{Configuration}
+
+Two user-configurable parameters control the locator appearance:
+\begin{itemize}[leftmargin=2em]
+  \item \cmd{citemspscale} (default~0.35) --- controls the locator glyph
+    size via \cmd{scalebox} from \pkg{graphicx}.
+  \item \cmd{citemspraiseoffset} (default~1.5pt) --- vertical offset
+    applied via \cmd{raisebox} to superscript locators.
+\end{itemize}
+
+\noindent Redefine them after loading:
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\renewcommand{\citemspscale}{0.4}
+\renewcommand{\citemspraiseoffset}{2pt}
+\end{verbatim}
+\end{tcolorbox}
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Comparison with Standard Biblatex}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{table}[ht]
+\centering
+\rowcolors{2}{blue!3}{white}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.46\textwidth}
+                >{\raggedright\arraybackslash}p{0.46\textwidth}}
+\toprule
+\rowcolor{blue!15}
+\textbf{Standard biblatex} & \textbf{citemsp} \\
+\midrule
+\verb|\autocite[§3.2]{smith2003}| \newline
+$\rightarrow$ [1, \S3.2]
+&
+\verb|\citemsp{smith2003/3.2}| \newline
+$\rightarrow$ \citemsp{smith2003/3.2}
+\\[6pt]
+\verb|\autocites[§3.2]{smith2003}| \verb|[eq.~4.3]{meyerrochow2003}| \newline
+$\rightarrow$ [1, \S3.2][2, eq.~4.3]
+&
+\verb|\citemsp{smith2003/3.2,| \verb|meyerrochow2003/e4.3}| \newline
+$\rightarrow$ \citemsp{smith2003/3.2, meyerrochow2003/e4.3}
+\\[6pt]
+\verb|\autocites[§3.2, ¶5]{smith2003}| \newline
+$\rightarrow$ [1, \S3.2, \P5]
+&
+\verb|\citemsp{smith2003/3.2/5}| \newline
+$\rightarrow$ \citemsp{smith2003/3.2/5}
+\\[6pt]
+No built-in typed locator syntax; user must type symbols manually
+&
+Ten built-in prefixes; extensible via \cmd{citemspprefix}
+\\[6pt]
+Range compression via \texttt{numeric-comp}
+&
+Plain entries (no~\texttt{/}) compressed via the backend's native
+\cmd{cite}, so compression works identically
+\\
+\bottomrule
+\end{tabular}
+\caption{Feature comparison between standard \pkg{biblatex} locators and
+  \pkg{citemsp}.}
+\label{tab:comparison}
+\end{table}
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Examples}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Single source with section and paragraph}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The lack of randomised controlled trials on
+parachutes~\citemsp{smith2003/6.1/2} remains a gap in
+evidence-based medicine.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The lack of randomised controlled trials on
+parachutes~\citemsp{smith2003/6.1/2} remains a gap in evidence-based
+medicine.
+
+
+\subsection{Section-only locator}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+Chickens were found to prefer beautiful
+humans~\citemsp{ghirlanda2002/2.3}, raising questions about
+peer review in poultry science.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} Chickens were found to prefer beautiful
+humans~\citemsp{ghirlanda2002/2.3}, raising questions about peer review
+in poultry science.
+
+
+\subsection{Subscript-only locator}
+
+An empty first slot (double slash) gives a subscript without a superscript:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\citemsp{smith2003//5}              % paragraph 5, no section
+\citemsp{meyerrochow2003//e2.1}        % equation 2.1, no section
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:}
+\citemsp{smith2003//5},\enspace
+\citemsp{meyerrochow2003//e2.1}.
+
+
+\subsection{Multiple sources with mixed locators}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+Writer's block~\citemsp{upper1974, smith2003/4,
+  meyerrochow2003/1/2} has been studied from behavioural,
+medical, and ornithological perspectives.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} Writer's
+block~\citemsp{upper1974, smith2003/4, meyerrochow2003/1/2} has been
+studied from behavioural, medical, and ornithological perspectives.
+
+
+\subsection{Range compression}
+
+Plain entries (no slashes) are batched and passed to the backend's native
+\cmd{cite}, so range compression works automatically when using
+\texttt{numeric-comp} (biblatex) or \texttt{sort\&compress} (natbib).
+Entries \emph{with} locators are rendered individually and interleaved
+with the compressed group.  The examples below illustrate different
+combinations.
+
+\medskip
+\noindent\textbf{1.\enspace All plain (fully compressed):}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\citemsp{upper1974, pennycook2015, smith2003, meyerrochow2003,
+  wang2020}
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:}
+\citemsp{upper1974, pennycook2015, smith2003, meyerrochow2003, wang2020}
+
+\medskip
+\noindent\textbf{2.\enspace Plain entries mixed with locator entries:}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\citemsp{upper1974, pennycook2015, smith2003/4.1,
+  meyerrochow2003, wang2020}
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:}
+\citemsp{upper1974, pennycook2015, smith2003/4.1, meyerrochow2003, wang2020}
+
+\smallskip\noindent
+The plain entries compress into a range while the locator entry renders
+separately.
+
+\medskip
+\noindent\textbf{3.\enspace Multiple locator entries among plain ones:}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\citemsp{upper1974, pennycook2015/2.3, smith2003,
+  meyerrochow2003/e14, wang2020}
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:}
+\citemsp{upper1974, pennycook2015/2.3, smith2003, meyerrochow2003/e14, wang2020}
+
+\medskip
+\noindent\textbf{4.\enspace Every entry has a locator (no compression):}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\citemsp{upper1974/1, smith2003/4.1/2,
+  meyerrochow2003/e14, wang2020/p21}
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:}
+\citemsp{upper1974/1, smith2003/4.1/2, meyerrochow2003/e14, wang2020/p21}
+
+\smallskip\noindent
+When every entry carries a locator, each is rendered individually and no
+range compression occurs.
+
+\medskip
+\noindent\textbf{5.\enspace Locator entries with super and subscript among plain ones:}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\citemsp{upper1974, pennycook2015, smith2003/6.1/2,
+  meyerrochow2003, wang2020, cox1979/12.4/T5}
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:}
+\citemsp{upper1974, pennycook2015, smith2003/6.1/2, meyerrochow2003, wang2020, cox1979/12.4/T5}
+
+
+\subsection{Equation and figure locators}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The sloshing dynamics of coffee~\citemsp{mayer2012/3.2/e3.31}
+and the critical spill diagram~\citemsp{mayer2012/4.6/f4.1}
+explain why your laptop is always sticky.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The sloshing dynamics of
+coffee~\citemsp{mayer2012/3.2/e3.31} and the critical spill
+diagram~\citemsp{mayer2012/4.6/f4.1} explain why your laptop is
+always sticky.
+
+
+\subsection{Theorem, lemma, and corollary locators}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The Cox--Zucker machine~\citemsp{cox1979/12.4/T5} computes
+intersection numbers; see Lemma~\citemsp{cox1979/12.3/L2}
+and Corollary~\citemsp{cox1979/12.4/C3}.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The Cox--Zucker
+machine~\citemsp{cox1979/12.4/T5} computes intersection numbers; see
+Lemma~\citemsp{cox1979/12.3/L2} and
+Corollary~\citemsp{cox1979/12.4/C3}.
+
+
+\subsection{Definition and page locators}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The definition of a necrobotic
+actuator~\citemsp{yap2022/2.3/d2.1} involves reanimating
+dead spiders; see also~\citemsp{yap2022/p37}.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The definition of a necrobotic
+actuator~\citemsp{yap2022/2.3/d2.1} involves reanimating dead
+spiders; see also~\citemsp{yap2022/p37}.
+
+
+\subsection{Appendix and footnote locators}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The theorem that biologists cannot fix a
+radio~\citemsp{lazebnik2002/T11} is proven in
+Appendix~\citemsp{lazebnik2002/A2}; the apology to
+electrical engineers is in
+footnote~\citemsp{lazebnik2002/3/n4}.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The theorem that biologists cannot fix a
+radio~\citemsp{lazebnik2002/T11} is proven in
+Appendix~\citemsp{lazebnik2002/A2}; the apology to electrical engineers
+is in footnote~\citemsp{lazebnik2002/3/n4}.
+
+
+\subsection{Table locator and mixed types in one call}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+See~\citemsp{smith2003/6.1/2, matthews1995/e6.55,
+  wang2020/8.4/t2, yap2022/p170} for parachutes, toast,
+graphene, and dead spiders respectively.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:}
+See~\citemsp{smith2003/6.1/2, matthews1995/e6.55, wang2020/8.4/t2,
+yap2022/p170} for parachutes, toast, graphene, and dead spiders
+respectively.
+
+
+\subsection{Plain citation as drop-in replacement}
+
+Without slashes, \cmd{citemsp} behaves identically to \cmd{cite}:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+Elephant dung turns out to be useful
+habitat~\citemsp{camposarceiz2009}, which is more than can be
+said for most conference proceedings.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} Elephant dung turns out to be useful
+habitat~\citemsp{camposarceiz2009}, which is more than can be said for most
+conference proceedings.
+
+
+\subsection{Adjacent to inline math}
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+The penguin defaecation pressure $P \approx 60\,
+\mathrm{kPa}$~\citemsp{meyerrochow2003/e14, smith2003/4.3}
+exceeds most expectations.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} The penguin defaecation pressure
+$P \approx 60\,\mathrm{kPa}$~\citemsp{meyerrochow2003/e14, smith2003/4.3}
+exceeds most expectations.
+
+
+\subsection{Font contexts}
+
+The package works correctly in all standard \LaTeX\ font contexts.
+For italic and slanted shapes, a small kern is automatically inserted to
+prevent the locator from colliding with the slanted closing bracket.
+Bold, bold-italic, small caps, and upright text work without modification.
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+Upright:~\citemsp{smith2003/6.1/2}\\[3pt]
+\textit{Italic:~\citemsp{smith2003/6.1/2}}\\[3pt]
+\textsl{Slanted:~\citemsp{smith2003/6.1/2}}\\[3pt]
+\textbf{Bold:~\citemsp{smith2003/6.1/2}}\\[3pt]
+\textbf{\textit{Bold italic:~\citemsp{smith2003/6.1/2}}}\\[3pt]
+\textsc{Small caps:~\citemsp{smith2003/6.1/2}}\\[3pt]
+\emph{Emph (italic):~\citemsp{smith2003/6.1/2}
+  --- \emph{nested emph (upright):~\citemsp{smith2003/6.1/2}}}
+\end{tcolorbox}
+
+
+\subsection{Font sizes}
+
+Locator glyphs scale proportionally at different font sizes:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+{\small Small:~\citemsp{ghirlanda2002/2.3/e2.5}}\\
+{\normalsize Normal:~\citemsp{ghirlanda2002/2.3/e2.5}}\\
+{\large Large:~\citemsp{ghirlanda2002/2.3/e2.5}}
+\end{tcolorbox}
+
+
+\subsection{Custom prefixes}
+
+Place \cmd{citemspprefix} in the preamble, after loading \pkg{citemsp}:
+
+\citemspprefix{w}{w.}%
+\citemspprefix{H}{Hyp.}%
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+% in the preamble:
+\citemspprefix{w}{w.}       % "w" renders as "w."
+\citemspprefix{H}{Hyp.}     % "H" renders as "Hyp."
+
+% in the document body:
+\citemsp{zongker2006/3/w5}
+\citemsp{cox1979/12.4/H2}
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:}
+\citemsp{zongker2006/3/w5},\enspace
+\citemsp{cox1979/12.4/H2}
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Natbib Backend}
+% ══════════════════════════════════════════════════════════════════════════════
+
+Since v2.2, \pkg{citemsp} auto-detects whether \pkg{biblatex} or
+\pkg{natbib} is loaded and selects the matching code path.  No package
+option is needed.
+
+\subsection{Compatible classes}
+
+Many journal classes auto-load \pkg{natbib}.  With these, simply loading
+\pkg{citemsp} after the class is sufficient:
+
+\begin{table}[h]
+\centering
+\rowcolors{2}{blue!3}{white}
+\begin{tabular}{l l l}
+\toprule
+\rowcolor{blue!15}
+\textbf{Class} & \textbf{Backend} & \textbf{Notes} \\
+\midrule
+\texttt{article}, \texttt{report}, \texttt{book}, KOMA
+  & either & user's choice \\
+\texttt{revtex4-2} (APS)
+  & natbib (auto) & class loads natbib \\
+\texttt{aastex631} (AAS)
+  & natbib (auto) & class loads natbib \\
+\texttt{elsarticle} (Elsevier)
+  & natbib (manual) & add \verb|\usepackage[numbers]{natbib}| \\
+\texttt{IEEEtran} natbib mode
+  & natbib (manual) & add \verb|\usepackage[numbers]{natbib}| \\
+\bottomrule
+\end{tabular}
+\caption{Document class compatibility.}
+\label{tab:classes}
+\end{table}
+
+\subsection{Minimal natbib example}
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+\documentclass{article}
+\usepackage[numbers, sort&compress]{natbib}
+\usepackage{citemsp}
+\begin{document}
+See~\citemsp{key1/3.2/5, key2/e4.1} for details.
+\bibliographystyle{unsrt}
+\bibliography{refs}
+\end{document}
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent On the natbib path, \pkg{citemsp} uses \cmd{citenum} for the
+bare number and wraps it in a \cmd{hyperlink} when \pkg{hyperref} is
+loaded.  Range compression via \texttt{sort\&compress} works for plain
+entries.
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Implementation}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{Backend detection.}  At load time, the package checks
+    whether \pkg{biblatex} or \pkg{natbib} is already loaded.  If neither
+    is present, a descriptive error is raised.  If both are loaded
+    (itself an error), then \pkg{biblatex} is preferred.
+
+  \item \textbf{Locator scaling.}  \cmd{citemspscale} (default~0.35)
+    controls the size of locator glyphs via \cmd{scalebox} from
+    \pkg{graphicx}.  \cmd{citemspraiseoffset} (default~1.5pt)
+    sets the vertical offset of superscript locators via \cmd{raisebox}.
+
+  \item \textbf{Font shape detection.}  The renderer checks
+    \verb|\f@shape| against \texttt{it} (italic) and \texttt{sl}
+    (slanted).  In either case, a small math kern is inserted to prevent
+    the locator from colliding with the slanted final bracket.
+
+  \item \textbf{Prefix dispatch.}  Each locator value is tested: if its
+    first character matches a registered prefix (via
+    \verb|\csname @citemsp@pfx@...| lookup), the prefix symbol is
+    rendered; otherwise the default \S\ or \P\ is used.
+
+  \item \textbf{Citation rendering.}  On the biblatex path, a custom cite
+    command \cmd{citelinksp} (via \verb|\DeclareCiteCommand|) prints the
+    hyperlinked number and attaches locators.  On the natbib path,
+    \cmd{citenum} provides the bare number, wrapped in
+    \cmd{hyperlink} when \pkg{hyperref} is loaded.
+
+  \item \textbf{Entry parsing.}  The user-facing \cmd{citemsp} uses
+    \verb|\forcsvlist| (from \pkg{etoolbox}) to iterate over
+    comma-separated entries.  Each entry is split at forward slashes
+    using a delimited \verb|\def| pattern, extracting the key and up to
+    two locator slots.
+
+  \item \textbf{Plain-key batching.}  Entries without slashes are
+    accumulated into a buffer and flushed via the backend's native
+    \cmd{cite} (with brackets suppressed), so that range compression
+    (\texttt{numeric-comp} or \texttt{sort\&compress}) works identically
+    to a regular \cmd{cite} call.
+\end{enumerate}
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Limitations}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Numeric styles only.}  \pkg{citemsp} attaches locators to numeric citation labels. Other non-numeric styles are currently not supported.
+  \item \textbf{Manual paragraph counting.}  Paragraph locators refer to paragraph numbers counted manually from the start of the referenced section.  There is no automatic cross-referencing.
+  \item \textbf{\texttt{revtex4-2} with biblatex.}  The combination of \texttt{revtex4-2} and \pkg{biblatex} is incompatible due to conflicts in \verb|\addtocontents| patching between the two packages.  Although not a \pkg{citemsp} issue, users should keep that in mind. Make sure to use the natbib backend with revtex.
+\end{itemize}
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Conventions}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Section numbering:} use the source's native format
+    (e.g., 3.2.1, IV, A.1).
+  \item \textbf{Paragraph counting:} count paragraphs from the start of
+    the referenced section.  This is a manual convention; \pkg{citemsp}
+    does not verify paragraph numbers against the cited source.
+  \item \textbf{Subsection references:} use the full path
+    (e.g., \texttt{key/3.2.1}), not a relative number.
+  \item \textbf{Plain citations:} \verb|\citemsp{key}| with no slashes
+    produces a standard numeric citation, so the command can serve as a
+    drop-in replacement for \cmd{cite} if desired.
+\end{itemize}
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Requirements}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{itemize}[leftmargin=2em]
+  \item \LaTeX2e\ (2020/10/01 or later)
+  \item \pkg{biblatex} (any numeric style) \textbf{or} \pkg{natbib}
+    (with the \texttt{numbers} option)
+  \item \pkg{graphicx}
+  \item \pkg{etoolbox}
+  \item \pkg{amssymb} --- recommended for best glyph quality
+    ($\triangleq$, $\boxplus$).  If not loaded, \pkg{citemsp} provides
+    primitive fallback definitions.
+\end{itemize}
+
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{License}
+% ══════════════════════════════════════════════════════════════════════════════
+
+This work is released under the
+\href{https://www.latex-project.org/lppl/lppl-1-3c/}{LaTeX Project Public
+License, version~1.3c} or later.
+
+\newpage
+
+\printbibliography
+
+\end{document}
