@@ -13,8 +13,9 @@
 \definecolor{linkblue}{rgb}{0.0, 0.2, 0.6}
 \definecolor{linkred}{rgb}{0.7, 0.13, 0.13}
 \usepackage{amssymb}
-\usepackage[style=numeric, backend=biber]{biblatex}
+\usepackage[style=numeric, backend=biber, sorting=none]{biblatex}
 \usepackage{citemsp}
+\renewcommand{\citemspscale}{0.5} %adjust locators size
 \usepackage[colorlinks=true, citecolor=linkblue, linkcolor=linkred, urlcolor=linkblue]{hyperref}
 \usepackage{tcolorbox}
 \usepackage{authblk}
@@ -191,7 +192,7 @@ Appelstra\ss e~2, 30167 Hannover, Germany}
 
 \begin{abstract}
 \noindent
-The \pkg{citemsp} package provides a single user-facing command, \cmd{citemsp}, that attaches section~(\S), paragraph~(\P), and prefix-based locators directly to numeric citation labels. It works on top of either \pkg{biblatex} or \pkg{natbib}, auto-detecting which backend is loaded. An extensible prefix registry provides, currently, ten built-in types and users can register custom prefixes with \cmd{citemspprefix}. The package parses a slash-delimited syntax, rendering each locator as a superscript/subscript pair on the corresponding citation number, producing output such as~\citemsp{smith2003/3.2/5, wang2020/p520, meyerrochow2003/1/e4.3}. Plain entries (no slashes) are batched and passed to the backend's native \cmd{cite}, so range compression (\pkg{numeric-comp}, \texttt{sort\&compress}) works naturally.
+The \pkg{citemsp} package provides a single user-facing command, \cmd{citemsp}, that attaches section~(\S), paragraph~(\P), and prefix-based locators directly to numeric citation labels. It works on top of either \pkg{biblatex} or \pkg{natbib}, auto-detecting which backend is loaded. An extensible prefix registry currently provides ten built-in types, and users can register custom prefixes with \cmd{citemspprefix}. The package parses a slash-delimited syntax, rendering each locator as a superscript/subscript pair on the corresponding citation number, producing output such as~\citemsp{smith2003/3.2/5, wang2020/p520, meyerrochow2003/1/e4.3}. Plain entries (no slashes) are batched and passed to the backend's native \cmd{cite}, so range compression (\pkg{numeric-comp}, \texttt{sort\&compress}) works naturally.
 \end{abstract}
 
 %\tableofcontents
@@ -209,26 +210,49 @@ free-form locator after the citation number.  For multi-key citations,
 %
 \begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
-\begin{verbatim}
-\autocites[§3.2]{smith2003}[¶2]{meyerrochow2003}
-\end{verbatim}
+\begin{tabular*}{\dimexpr\linewidth-0pt}{@{}l@{\extracolsep{\fill}}c@{\quad}l@{}}
+\texttt{\textbackslash autocite[§3.2]\{smith2003\}}
+  & $\longrightarrow$ & \autocite[§3.2]{smith2003}\\[3pt]
+\texttt{\textbackslash autocites[§3.2]\{smith2003\}[¶2]\{meyerrochow2003\}}
+  & $\longrightarrow$ & \autocites[§3.2]{smith2003}[¶2]{meyerrochow2003}
+\end{tabular*}
 \end{tcolorbox}
 %
-\noindent This approach has two limitations when writing a scientific paper:
+\noindent This approach has two primary limitations:
+
+%\begin{enumerate}[leftmargin=2em]
+%  \item \textbf{Verbose syntax.}  Citing multiple sources with locators
+%    requires nested optional arguments, which is both cumbersome in source files and impractical in the compiled document.
+%  \item \textbf{No typed locators.}  There is no efficient and compact notation for
+%    referencing specific equations, figures, definitions, theorems etc. within cited literature. 
+%\end{enumerate}
 
 \begin{enumerate}[leftmargin=2em]
-  \item \textbf{Verbose syntax.}  Citing three sources with locators
-    requires nested optional arguments, which is cumbersome in source files.
-  \item \textbf{No typed locators.}  There is no compact notation for
-    referencing specific equations, figures, definitions, or theorems within
-    cited works.
-\end{enumerate}
+  \item \textbf{Verbose syntax.} Each additional locator requires a full
+    optional-argument pair, both in the source (\texttt{\textbackslash
+    autocites[...]\{key\}[...]\{key\}...}) and in the compiled output, where
+    the postnote is typeset as plain bracketed text indistinguishable from
+    the citation number.  As the example above shows,
+    the bracket grows linearly with every additional key and locator,
+    quickly cluttering the running text.
+\item \textbf{No registry, in either backend.} \pkg{natbib} and \pkg{biblatex}
+  are the two general-purpose citation backends used by nearly all modern LaTeX documents. \pkg{natbib}'s postnote is free text
+  with no type system at all. \pkg{biblatex} comes closer with a
+  \texttt{pagination} field, but it recognizes only a small, localized set
+  of generic types (page, chapter, section, paragraph, verse, line, column),
+  is fixed once per bibliography entry rather than chosen per citation, and
+  excludes scholarly types such as equation, theorem, figure, or lemma.
+  \end{enumerate}
 
-\noindent The \pkg{citemsp} package renders locators as a
-superscript/subscript pair attached to the citation number, supports ten
-built-in prefix types via an extensible registry, and accepts all keys with
-their locators in a single comma-separated argument.  It supports both
-\pkg{biblatex} and \pkg{natbib} backends.
+\noindent \pkg{citemsp} addresses both limitations directly while working on top of \pkg{biblatex} or
+\pkg{natbib}. Locators are
+rendered as a superscript/subscript pair, visually set apart from the
+citation number, and every key with its locators is passed in a single
+comma-separated argument rather than nested optional arguments. Ten
+built-in prefix types, extensible via \cmd{citemspprefix}, give authors a
+consistent, per-citation locator registry that neither backend provides
+on its own.
+
 
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -245,18 +269,23 @@ Copy \texttt{citemsp.sty} into the same directory as your main
 \begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
 \begin{verbatim}
-mkdir -p ~/texmf/tex/latex/citemsp
-cp citemsp.sty ~/texmf/tex/latex/citemsp/
-texhash ~/texmf
+TEXMFHOME=$(kpsewhich -var-value=TEXMFHOME)
+mkdir -p "$TEXMFHOME/tex/latex/citemsp"
+cp citemsp.sty "$TEXMFHOME/tex/latex/citemsp/"
+texhash "$TEXMFHOME"
 \end{verbatim}
 \end{tcolorbox}
+%
+\noindent \verb|TEXMFHOME| resolves to \verb|~/texmf| on a vanilla TeX Live
+install (e.g., Linux) and to \verb|~/Library/texmf| on MacTeX --- using the
+\verb|kpsewhich|-derived value keeps a single command portable across both.
 
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Usage}
 % ══════════════════════════════════════════════════════════════════════════════
 
-\subsection{Loading with biblatex}
+\subsection{Loading and compiling with biblatex}
 
 The package must be loaded \emph{after} \pkg{biblatex}:
 %
@@ -268,8 +297,16 @@ The package must be loaded \emph{after} \pkg{biblatex}:
 \usepackage{citemsp}
 \end{verbatim}
 \end{tcolorbox}
+%
+\noindent Build with \verb|latexmk -pdf <file>.tex|, or manually with the
+chain \verb|pdflatex| $\to$ \verb|biber| $\to$ \verb|pdflatex| $\to$
+\verb|pdflatex|. 
 
-\subsection{Loading with natbib}
+\noindent Running plain \verb|bibtex| against a \texttt{backend=biber}
+document leaves the bibliography empty, since \pkg{biblatex}/\pkg{biber}
+write a different auxiliary-file format than classic \pkg{bibtex} expects.
+
+\subsection{Loading and compiling with natbib}
 
 \begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
@@ -279,9 +316,16 @@ The package must be loaded \emph{after} \pkg{biblatex}:
 \end{verbatim}
 \end{tcolorbox}
 %
+\noindent Build with \verb|latexmk -pdf <file>.tex|, or manually with the
+chain \verb|pdflatex| $\to$ \verb|bibtex| $\to$ \verb|pdflatex| $\to$
+\verb|pdflatex|.
+
+
 \noindent Classes that auto-load \pkg{natbib} (e.g., \pkg{revtex4-2},
 \pkg{aastex631}) require no explicit \verb|\usepackage{natbib}|.
 Loading \pkg{citemsp} before either backend produces a package error.
+
+
 
 \subsection{Syntax}
 
