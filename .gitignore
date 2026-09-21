@@ -15,7 +15,6 @@
 
 # filecontents-generated bib files
 refs-citemsp.bib
-sandbox-refs.bib
 
 # CTAN build
 _ctan/
@@ -25,11 +24,8 @@ citemsp-*-tds.zip
 
 # Synced .sty copies (canonical source is root citemsp.sty)
 CTAN/citemsp.sty
-paper/citemsp.sty
-sandbox/citemsp.sty
 
-# Compiled PDFs in sandbox (test artifacts, not tracked)
-sandbox/*.pdf
-
-# Archive (local only, not shipped)
+# Local development (not shipped)
+paper/
+sandbox/
 archive/

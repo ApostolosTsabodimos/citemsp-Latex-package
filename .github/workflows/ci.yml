@@ -15,7 +15,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build all documents and run smoke checks
+      - name: Build documentation and run smoke checks
         run: make check
 
       - name: Build CTAN archives
@@ -34,8 +34,5 @@ jobs:
           name: citemsp-build-artifacts
           path: |
             CTAN/citemsp-doc.pdf
-            paper/citemsp-paper.pdf
-            sandbox/sandbox.pdf
-            sandbox/test-natbib.pdf
             citemsp.zip
             citemsp-2.3-tds.zip

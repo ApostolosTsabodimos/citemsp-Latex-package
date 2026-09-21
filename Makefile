@@ -1,4 +1,4 @@
-.PHONY: doc paper sandbox all check ctan ctan-tds clean
+.PHONY: doc all check ctan ctan-tds clean
 
 STY = citemsp.sty
 VERSION = 2.3
@@ -13,21 +13,11 @@ export TEXINPUTS := $(ROOT):$(TEXINPUTS)
 doc:
 	cd CTAN && latexmk -pdf -interaction=nonstopmode -halt-on-error citemsp-doc.tex
 
-paper:
-	cd paper && latexmk -pdf -interaction=nonstopmode -halt-on-error citemsp-paper.tex
-
-sandbox:
-	cd sandbox && latexmk -pdf -interaction=nonstopmode -halt-on-error sandbox.tex
-	cd sandbox && latexmk -pdf -interaction=nonstopmode -halt-on-error test-natbib.tex
-
-all: doc paper sandbox
+all: doc
 
 # ── Reproducible local validation ────────────────────────────────────────────
 check: all
 	test -s CTAN/citemsp-doc.pdf
-	test -s paper/citemsp-paper.pdf
-	test -s sandbox/sandbox.pdf
-	test -s sandbox/test-natbib.pdf
 
 # ── CTAN zip ─────────────────────────────────────────────────────────────────
 #  Packages only what CTAN expects: .sty, docs (.tex + .pdf), README, LICENSE.
@@ -50,9 +40,7 @@ ctan-tds: doc
 	cd _ctan-tds && zip -qr ../citemsp-$(VERSION)-tds.zip .
 	rm -rf _ctan-tds
 
-# ── Clean build artifacts (all subfolders) ───────────────────────────────────
+# ── Clean build artifacts ───────────────────────────────────────────────────
 clean:
 	cd CTAN && latexmk -c citemsp-doc.tex 2>/dev/null; rm -f refs-citemsp.bib
-	cd paper && latexmk -c citemsp-paper.tex 2>/dev/null; rm -f refs-citemsp.bib
-	cd sandbox && latexmk -c sandbox.tex 2>/dev/null; latexmk -c test-natbib.tex 2>/dev/null; rm -f sandbox-refs.bib
 	rm -rf _ctan _ctan-tds citemsp.zip citemsp-$(VERSION)-tds.zip

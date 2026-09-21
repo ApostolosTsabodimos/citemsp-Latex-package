@@ -1,8 +1,8 @@
-# citemsp — Citation Locators for LaTeX
+# citemsp — Per-key Citation Locators for LaTeX
 
-A LaTeX package adding per-key citation locators rendered as compact
-superscript/subscript pairs on numeric citation labels. Works on top of
-either `biblatex` or `natbib`.
+A LaTeX package that attaches section, paragraph, and other locators
+directly to numeric citation labels as compact superscript/subscript
+pairs. Works on top of either `biblatex` or `natbib`.
 
 ## Quick start
 
@@ -15,7 +15,7 @@ either `biblatex` or `natbib`.
 ```
 
 **With natbib** (or a class that auto-loads it, e.g. `revtex4-2`,
-`aastex`):
+`aastex631`):
 
 ```latex
 \usepackage[numbers]{natbib}        % omit if your class loads it
@@ -66,46 +66,57 @@ Register custom prefixes with `\citemspprefix{letter}{label}`.
 | `aastex` / `aastex631` (AAS)         | natbib (auto)   | Just `\usepackage{citemsp}`. |
 | `elsarticle` (Elsevier)              | natbib (manual) | `\usepackage[numbers]{natbib}` first. |
 | `IEEEtran` natbib mode               | natbib (manual) | Use `\bibliographystyle{IEEEtranN}`. |
-| `IEEEtran` default mode              | unsupported     | Uses `\IEEEbibitem`, neither biblatex nor natbib. |
 
-## Repository structure
+## Installation
 
-```
-├── citemsp.sty          Package source (single copy, used by all subdirectories)
-├── Makefile             Build docs/paper/sandbox, package CTAN zip
-│
-├── CTAN/                CTAN submission
-│   ├── citemsp-doc.tex      Package documentation source
-│   ├── citemsp-doc.pdf      Compiled documentation
-│   ├── README.md            CTAN readme
-│   └── LICENSE              LPPL 1.3c
-│
-├── paper/               arXiv paper
-│   ├── citemsp-paper.tex    Paper source
-│   └── citemsp-paper.pdf    Compiled paper
-│
-├── sandbox/             Development and compatibility testing
-│   ├── sandbox.tex          Unified biblatex test suite
-│   └── test-natbib.tex      Natbib backend test
-│
-├── CHANGELOG.md        Version history
-├── ROADMAP.md
-└── LICENSE              LPPL 1.3c
+### Per-project
+
+Copy `citemsp.sty` into the same directory as your `.tex` file.
+
+### System-wide
+
+```bash
+mkdir -p ~/texmf/tex/latex/citemsp
+cp citemsp.sty ~/texmf/tex/latex/citemsp/
+texhash ~/texmf
 ```
 
-Subdirectory builds find `citemsp.sty` via `TEXINPUTS` (set by the Makefile).
+## Configuration
+
+Adjust the locator glyph size and vertical offset after loading:
+
+```latex
+\usepackage{citemsp}
+\renewcommand{\citemspscale}{0.4}           % default is 0.35
+\renewcommand{\citemspraiseoffset}{2pt}     % default is 1.5pt
+```
+
+## Documentation
+
+Full documentation with examples is in [`CTAN/citemsp-doc.pdf`](CTAN/citemsp-doc.pdf).
 
 ## Build commands
 
 ```bash
 make doc        # Build CTAN documentation
-make paper      # Build arXiv paper
-make sandbox    # Build sandbox test document
-make all        # Build everything
 make ctan       # Package CTAN zip
+make ctan-tds   # Package TDS zip for system-wide install
 make clean      # Remove build artifacts
 ```
+
+## Requirements
+
+- LaTeX2e (2020/10/01 or later)
+- `biblatex` or `natbib` (any numeric style)
+- `graphicx`, `etoolbox`
+- `amssymb` recommended (for best glyph quality; not required)
 
 ## License
 
 LPPL 1.3c — see [LICENSE](LICENSE).
+
+## Authors
+
+- Apostolos Tsampodimos — [apostolos.tsampodimos@ftmc.lt](mailto:apostolos.tsampodimos@ftmc.lt)
+- Nathaniel Sherrill
+- Agnese Mariotti
