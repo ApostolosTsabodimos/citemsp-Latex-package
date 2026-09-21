@@ -4,6 +4,29 @@
 
 ### Added
 
+- **Robust `\citemsp` command.** Uses `\DeclareRobustCommand` so
+  the command works safely in captions, headings, and other moving
+  arguments.
+- **Malformed input warning.** `\PackageWarning` is now emitted when
+  an entry contains more than two slash-delimited locator slots.
+- **Paragraph locator disclaimer.** Both the CTAN documentation and
+  the arXiv paper now note that paragraph locators are
+  edition-dependent and may be ambiguous.
+- **`make check` target.** Builds all documents and verifies PDFs
+  exist, suitable for CI and local validation.
+- **`make ctan-tds` target.** Produces a TDS-layout archive for
+  system-wide installation.
+- **GitHub Actions CI.** Automated build, smoke check, and artifact
+  upload on push and pull request.
+- **`CONTRIBUTING.md`.** Documents local validation steps.
+
+### Fixed
+
+- **File manifest.** LICENSE is now listed in the file manifest in
+  `citemsp.sty`, `LICENSE`, and `CTAN/LICENSE`.
+
+### Previously added in v2.3
+
 - **Slanted font detection.** The locator renderer now detects slanted
   (`\textsl`) font shape in addition to italic (`\textit`), applying
   the same kerning adjustment to both.
