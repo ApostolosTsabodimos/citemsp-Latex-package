@@ -102,22 +102,22 @@
 % ── Title ─────────────────────────────────────────────────────────────────────
 \title{\textbf{\texttt{citemsp}: Citation Locators for \LaTeX}}
 
-\author{Apostolos Tsampodimos%
+\author[1]{Apostolos Tsampodimos%
+  \thanks{\texttt{apostolos.tsampodimos@ftmc.lt}}%
   \,\,\githublink{ApostolosTsabodimos/citemsp-Latex-package}%
   \,\,\orcidlink{0009-0001-0230-5647}}
-\affil{Center for Physical Sciences and Technology\\
-  Saul\.etekio~3, 10257 Vilnius, Lithuania\\
-  \texttt{apostolos.tsampodimos@ftmc.lt}}
+\author[2]{Nathaniel Sherrill%
+  \thanks{\texttt{nathaniel.sherrill@itp.uni-hannover.de}}%
+  \,\,\orcidlink{0000-0001-6909-3872}}
+\author[2]{Agnese Mariotti%
+  \thanks{\texttt{agnese.mariotti@itp.uni-hannover.de}}%
+  \,\,\orcidlink{0000-0003-4602-7842}}
 
-\author{Nathaniel Sherrill%
-  \,\,\orcidlink{}}
-\affil{ITP Hannover\\
-  \texttt{email.de}}
+\affil[1]{Center for Physical Sciences and Technology,
+  Saul\.etekio~3, 10257 Vilnius, Lithuania}
+\affil[2]{Institute for Theoretical Physics, Leibniz University Hannover,
+  Appelstra{\ss}e~2, 30167 Hannover, Germany}
 
-\author{Agnese Mariotti%
-  \,\,\orcidlink{}}
-\affil{ITP Hannover\\
-  \texttt{email.de}}
 \date{\today}
 
 \begin{document}
@@ -146,28 +146,47 @@ The \texttt{\textbackslash citemsp} command accepts a comma-separated list of ci
 
 \noindent Currently there exist ten built-in prefixes, which are listed in Table~\ref{tab:prefixes}. Each prefix can appear in either the superscript or subscript slot. Users can register additional prefixes with \texttt{\textbackslash citemspprefix\{letter\}\{label\}}.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \rowcolors{2}{blue!3}{white}
-\begin{tabular}{c l l l l l}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.46\textwidth}
+                >{\raggedright\arraybackslash}p{0.46\textwidth}}
 \toprule
 \rowcolor{blue!15}
-\textbf{Prefix} & \textbf{Locator} & \textbf{Render} & \textbf{In super slot} & \textbf{In sub slot} & \textbf{Both slots} \\
+\textbf{Standard biblatex} & \textbf{citemsp} \\
 \midrule
-\texttt{A} & Appendix    & App.          & \citemsp{wald1984/A2}        & \citemsp{wald1984//A2}         & \citemsp{wald1984/3.2/A2} \\
-\texttt{C} & Corollary   & Cor.          & \citemsp{wald1984/C3}        & \citemsp{wald1984//C3}      & \citemsp{wald1984/4.1/C3} \\
-\texttt{d} & Definition  & $\triangleq$  & \citemsp{wald1984/d5}        & \citemsp{wald1984//d5}      & \citemsp{wald1984/3.2/d5} \\
-\texttt{e} & Equation    & eq.           & \citemsp{wald1984/e4.3}      & \citemsp{wald1984//e4.3}    & \citemsp{wald1984/6.2/e4.3} \\
-\texttt{f} & Figure      & fig.          & \citemsp{wald1984/f3}        & \citemsp{wald1984//f3}      & \citemsp{wald1984/6.1/f3} \\
-\texttt{L} & Lemma       & Lem.          & \citemsp{wald1984/L1}        & \citemsp{wald1984//L1}      & \citemsp{wald1984/3.2/L1} \\
-\texttt{n} & Footnote    & $\dagger$     & \citemsp{hawking1974/n7}     & \citemsp{hawking1974//n7}     & \citemsp{hawking1974/1/n7} \\
-\texttt{p} & Page        & pp.           & \citemsp{wald1984/p42}       & \citemsp{wald1984//p42}     & \citemsp{wald1984/3.2/p42} \\
-\texttt{t} & Table       & $\boxplus$    & \citemsp{mtw1973/t2}         & \citemsp{mtw1973//t2}       & \citemsp{mtw1973/8.4/t2} \\
-\texttt{T} & Theorem     & Th.           & \citemsp{wald1984/T4.2}      & \citemsp{wald1984//T4.2}    & \citemsp{wald1984/6.1/T4.2} \\
+\verb|\autocite[§3.2]{smith2003}| \newline
+$\rightarrow$ [1, \S3.2]
+&
+\verb|\citemsp{smith2003/3.2}| \newline
+$\rightarrow$ \citemsp{smith2003/3.2}
+\\[6pt]
+\verb|\autocites[§3.2]{smith2003}| \verb|[eq.~4.3]{meyerrochow2003}| \newline
+$\rightarrow$ [1, \S3.2][2, eq.~4.3]
+&
+\verb|\citemsp{smith2003/3.2,| \verb|meyerrochow2003/e4.3}| \newline
+$\rightarrow$ \citemsp{smith2003/3.2, meyerrochow2003/e4.3}
+\\[6pt]
+\verb|\autocites[§3.2, ¶5]{smith2003}| \newline
+$\rightarrow$ [1, \S3.2, \P5]
+&
+\verb|\citemsp{smith2003/3.2/5}| \newline
+$\rightarrow$ \citemsp{smith2003/3.2/5}
+\\[6pt]
+No built-in typed locator syntax; user must type symbols manually
+&
+Ten built-in prefixes; extensible via \cmd{citemspprefix}
+\\[6pt]
+Range compression via \texttt{numeric-comp}
+&
+Plain entries (no~\texttt{/}) compressed via the backend's native
+\cmd{cite}, so compression works identically
+\\
 \bottomrule
 \end{tabular}
-\caption{Built-in prefix registry.}
-\label{tab:prefixes}
+\caption{Feature comparison between standard \pkg{biblatex} locators and
+  \pkg{citemsp}.}
+\label{tab:comparison}
 \end{table}
 
 

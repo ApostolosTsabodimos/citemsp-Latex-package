@@ -201,11 +201,6 @@
   \@citemsp@parse#1///\@nil
 }
 \def\@citemsp@parse#1/#2/#3/#4\@nil{%
-  \def\@citemsp@tmp{#4}%
-  \ifx\@citemsp@tmp\empty\else
-    \PackageWarning{citemsp}{Malformed entry '#1/#2/#3/#4' -- too many
-      slash segments. Only key/loc1/loc2 is supported}%
-  \fi
   \def\@citemsp@sec{#2}%
   \def\@citemsp@par{#3}%
   \ifx\@citemsp@sec\empty
