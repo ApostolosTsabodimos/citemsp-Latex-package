@@ -473,6 +473,42 @@ Plain entries (no~\texttt{/}) compressed via the backend's native
 \end{table}
 
 
+\subsection{Source-level comparison}
+
+The difference in source verbosity becomes clear when multiple locator-bearing
+citations appear together.  Consider six sources:
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+% Standard biblatex (6 sources, ~185 characters):
+\autocites[§3.2]{smith2003}[¶2]{meyerrochow2003}
+  [eq.\,6.55]{matthews1995}[§8.4, tab.\,2]{wang2020}
+  [§2.3]{ghirlanda2002}[§3]{zongker2006}
+
+% citemsp equivalent (6 sources, ~114 characters):
+\citemsp{smith2003/3.2, meyerrochow2003//2,
+  matthews1995/e6.55, wang2020/8.4/t2,
+  ghirlanda2002/2.3, zongker2006/3}
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Rendered output:}
+
+\medskip
+\noindent
+\begin{tabular}{@{}lp{10cm}@{}}
+biblatex: & \autocites[§3.2]{smith2003}[¶2]{meyerrochow2003}[eq.\,6.55]{matthews1995}[§8.4, tab.\,2]{wang2020}[§2.3]{ghirlanda2002}[§3]{zongker2006} \\[4pt]
+citemsp:  & \citemsp{smith2003/3.2, meyerrochow2003//2, matthews1995/e6.55, wang2020/8.4/t2, ghirlanda2002/2.3, zongker2006/3}
+\end{tabular}
+
+\medskip
+\noindent At six entries the \pkg{biblatex} source is roughly 40\% longer, and
+the rendered bracket sequence occupies significant horizontal space.  The
+\pkg{citemsp} output remains a single compact bracket with superscript/subscript
+annotations.
+
+
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Examples}
 % ══════════════════════════════════════════════════════════════════════════════
