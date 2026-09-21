@@ -11,7 +11,7 @@
 %% The Current Maintainer of this work is Apostolos Tsampodimos.
 %%
 %% This work consists of the files citemsp.sty, citemsp-doc.tex,
-%% citemsp-doc.pdf, README.md, and CHANGELOG.md.
+%% citemsp-doc.pdf, README.md, CHANGELOG.md, and LICENSE.
 %%
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
 \ProvidesPackage{citemsp}[2026/07/22 v2.3 Per-key citation locators (biblatex or natbib)]
@@ -189,7 +189,7 @@
   \fi
 }
 
-\newcommand{\citemsp}[1]{%
+\DeclareRobustCommand{\citemsp}[1]{%
   [%
   \def\@citemsp@plainrun{}%
   \@citemsp@startedfalse
@@ -201,6 +201,11 @@
   \@citemsp@parse#1///\@nil
 }
 \def\@citemsp@parse#1/#2/#3/#4\@nil{%
+  \def\@citemsp@tmp{#4}%
+  \ifx\@citemsp@tmp\empty\else
+    \PackageWarning{citemsp}{Malformed entry '#1/#2/#3/#4' -- too many
+      slash segments. Only key/loc1/loc2 is supported}%
+  \fi
   \def\@citemsp@sec{#2}%
   \def\@citemsp@par{#3}%
   \ifx\@citemsp@sec\empty

@@ -351,7 +351,7 @@ The standard \texttt{biblatex} provides locators via its postnote mechanism, the
 \begin{itemize}
   \item \textbf{Section numbering.} Use the source's native section numbering format (e.g., \texttt{6.1} for ``Section~6.1'').
 
-  \item \textbf{Paragraph counting.} Paragraphs are counted manually from the start of the section. This is inherently edition-dependent and best suited for stable references such as textbooks.
+  \item \textbf{Paragraph counting.} Paragraphs are counted manually from the start of the section. This is inherently edition-dependent and best suited for stable references such as textbooks. Since paragraphs are not explicitly numbered in published sources, these locators may be ambiguous across editions or between readers. When using \P\ locators, consider providing additional context in the surrounding text so the reader can locate the passage independently.
 
   \item \textbf{Custom prefixes.} Register new locator types with \verb|\citemspprefix{letter}{label}|. The letter must be a single character not already in use. Custom and built-in prefixes can be freely mixed in the same \texttt{\textbackslash citemsp} call.
 \end{itemize}

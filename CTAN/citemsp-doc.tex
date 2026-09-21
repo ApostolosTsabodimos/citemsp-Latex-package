@@ -931,6 +931,13 @@ entries.
   \item \textbf{Paragraph counting:} count paragraphs from the start of
     the referenced section.  This is a manual convention; \pkg{citemsp}
     does not verify paragraph numbers against the cited source.
+
+    \emph{Note:} Paragraph locators rely on manual counting from the
+    start of the referenced section.  Since paragraphs are not explicitly
+    numbered in published sources, these locators may be ambiguous across
+    editions or between readers.  When using \P\ locators, consider
+    providing additional context in the surrounding text so the reader
+    can locate the passage independently.
   \item \textbf{Subsection references:} use the full path
     (e.g., \texttt{key/3.2.1}), not a relative number.
   \item \textbf{Plain citations:} \verb|\citemsp{key}| with no slashes
