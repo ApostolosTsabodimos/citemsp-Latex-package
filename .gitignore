@@ -18,7 +18,9 @@ sandbox-refs.bib
 
 # CTAN build
 _ctan/
+_ctan-tds/
 citemsp.zip
+citemsp-*-tds.zip
 
 # Synced .sty copies (canonical source is root citemsp.sty)
 CTAN/citemsp.sty
