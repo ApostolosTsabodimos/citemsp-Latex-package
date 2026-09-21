@@ -1,0 +1,41 @@
+name: TeX build and packaging
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: texlive/texlive:latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build all documents and run smoke checks
+        run: make check
+
+      - name: Build CTAN archives
+        run: make ctan ctan-tds
+
+      - name: Verify archive contents
+        run: |
+          test -s citemsp.zip
+          test -s citemsp-2.3-tds.zip
+          unzip -l citemsp.zip
+          unzip -l citemsp-2.3-tds.zip
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: citemsp-build-artifacts
+          path: |
+            CTAN/citemsp-doc.pdf
+            paper/citemsp-paper.pdf
+            sandbox/sandbox.pdf
+            sandbox/test-natbib.pdf
+            citemsp.zip
+            citemsp-2.3-tds.zip
