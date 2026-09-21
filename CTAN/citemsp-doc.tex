@@ -594,7 +594,7 @@ with the compressed group.  The examples below illustrate different
 combinations.
 
 \medskip
-\noindent\textbf{1.\enspace All plain (fully compressed):}
+\noindent\textbf{1.\enspace All plain}
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
@@ -626,7 +626,7 @@ The plain entries compress into a range while the locator entry renders
 separately.
 
 \medskip
-\noindent\textbf{3.\enspace Multiple locator entries among plain ones:}
+\noindent\textbf{3.\enspace Mixed entry locators}
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
@@ -639,9 +639,6 @@ separately.
 \noindent\textbf{Output:}
 \citemsp{upper1974, pennycook2015/2.3, smith2003, meyerrochow2003/e14, wang2020}
 
-\medskip
-\noindent\textbf{4.\enspace Every entry has a locator (no compression):}
-
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
 \begin{verbatim}
@@ -652,13 +649,6 @@ separately.
 
 \noindent\textbf{Output:}
 \citemsp{upper1974/1, smith2003/4.1/2, meyerrochow2003/e14, wang2020/p21}
-
-\smallskip\noindent
-When every entry carries a locator, each is rendered individually and no
-range compression occurs.
-
-\medskip
-\noindent\textbf{5.\enspace Locator entries with super and subscript among plain ones:}
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
@@ -741,7 +731,7 @@ Appendix~\citemsp{lazebnik2002/A2}; the apology to electrical engineers
 is in footnote~\citemsp{lazebnik2002/3/n4}.
 
 
-\subsection{Table locator and mixed types in one call}
+\subsection{Table locator}
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
