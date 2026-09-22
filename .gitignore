@@ -26,6 +26,6 @@ citemsp-*-tds.zip
 CTAN/citemsp.sty
 
 # Local development (not shipped)
-paper/
 sandbox/
 archive/
+ROADMAP.md

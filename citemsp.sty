@@ -51,6 +51,13 @@
 \newcommand{\citemspraiseoffset}{1.5pt}
 \newcommand{\citemspsize}[1]{\scalebox{\citemspscale}{#1}}
 
+% ── Fixed-font option ────────────────────────────────────────────────────────
+%  When true, \citemsp output is set in \textnormal (upright, medium weight,
+%  default family) regardless of the surrounding font context.
+%  Enable with \citemspfixedfonttrue after loading.
+\newif\ifcitemspfixedfont
+\citemspfixedfontfalse
+
 % ── Internal state ────────────────────────────────────────────────────────────
 \newcommand{\@citemsp@sec}{}
 \newcommand{\@citemsp@par}{}
@@ -190,12 +197,21 @@
 }
 
 \DeclareRobustCommand{\citemsp}[1]{%
-  [%
-  \def\@citemsp@plainrun{}%
-  \@citemsp@startedfalse
-  \forcsvlist{\@citemsp@item}{#1}%
-  \@citemsp@flushplain % flush any trailing plain run
-  ]%
+  \ifcitemspfixedfont
+    \textnormal{[%
+    \def\@citemsp@plainrun{}%
+    \@citemsp@startedfalse
+    \forcsvlist{\@citemsp@item}{#1}%
+    \@citemsp@flushplain
+    ]}%
+  \else
+    [%
+    \def\@citemsp@plainrun{}%
+    \@citemsp@startedfalse
+    \forcsvlist{\@citemsp@item}{#1}%
+    \@citemsp@flushplain
+    ]%
+  \fi
 }
 \newcommand{\@citemsp@item}[1]{%
   \@citemsp@parse#1///\@nil

@@ -13,7 +13,7 @@
 \definecolor{linkblue}{rgb}{0.0, 0.2, 0.6}
 \definecolor{linkred}{rgb}{0.7, 0.13, 0.13}
 \usepackage{amssymb}
-\usepackage[style=numeric, backend=biber, sorting=none]{biblatex}
+\usepackage[style=numeric-comp, backend=biber, sorting=none]{biblatex}
 \usepackage{citemsp}
 \renewcommand{\citemspscale}{0.5} %adjust locators size
 \usepackage[colorlinks=true, citecolor=linkblue, linkcolor=linkred, urlcolor=linkblue]{hyperref}
@@ -260,6 +260,22 @@ consistent, per-citation locator registry that neither backend provides
 on its own.
 
 
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Requirements}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{itemize}[leftmargin=2em]
+  \item \LaTeX2e\ (2020/10/01 or later)
+  \item \pkg{biblatex} (any numeric style) \textbf{or} \pkg{natbib}
+    (with the \texttt{numbers} option)
+  \item \pkg{graphicx}
+  \item \pkg{etoolbox}
+  \item \pkg{amssymb} --- recommended for best glyph quality
+    ($\triangleq$, $\boxplus$).  If not loaded, \pkg{citemsp} provides
+    primitive fallback definitions.
+\end{itemize}
+
+
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Installation}
@@ -282,18 +298,24 @@ texhash "$TEXMFHOME"
 \end{verbatim}
 \end{tcolorbox}
 %
-\noindent \verb|TEXMFHOME| resolves to \verb|~/texmf| on a vanilla TeX Live
-install (e.g., Linux) and to \verb|~/Library/texmf| on MacTeX --- using the
-\verb|kpsewhich|-derived value keeps a single command portable across both.
+\noindent The \verb|kpsewhich| command ships with every TeX Live and MacTeX
+installation, so the above works on Linux, macOS, and Windows alike.
+Typical resolved paths: \verb|~/texmf| (Linux), \verb|~/Library/texmf|
+(macOS/MacTeX), and \verb|C:\Users\<name>\texmf| (Windows/TeX Live).
+Using the \verb|kpsewhich|-derived value keeps a single command portable
+across all three platforms.
 
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Usage}
 % ══════════════════════════════════════════════════════════════════════════════
 
-\subsection{Loading and compiling with biblatex}
+\subsection{Loading the package}
 
-The package must be loaded \emph{after} \pkg{biblatex}:
+The package must be loaded \emph{after} the citation backend.
+
+\medskip
+\noindent\textbf{With biblatex:}
 %
 \begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
@@ -303,17 +325,9 @@ The package must be loaded \emph{after} \pkg{biblatex}:
 \usepackage{citemsp}
 \end{verbatim}
 \end{tcolorbox}
+
+\noindent\textbf{With natbib:}
 %
-\noindent Build with \verb|latexmk -pdf <file>.tex|, or manually with the
-chain \verb|pdflatex| $\to$ \verb|biber| $\to$ \verb|pdflatex| $\to$
-\verb|pdflatex|. 
-
-\noindent Running plain \verb|bibtex| against a \texttt{backend=biber}
-document leaves the bibliography empty, since \pkg{biblatex}/\pkg{biber}
-write a different auxiliary-file format than classic \pkg{bibtex} expects.
-
-\subsection{Loading and compiling with natbib}
-
 \begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
 \begin{verbatim}
@@ -321,15 +335,30 @@ write a different auxiliary-file format than classic \pkg{bibtex} expects.
 \usepackage{citemsp}
 \end{verbatim}
 \end{tcolorbox}
-%
-\noindent Build with \verb|latexmk -pdf <file>.tex|, or manually with the
-chain \verb|pdflatex| $\to$ \verb|bibtex| $\to$ \verb|pdflatex| $\to$
-\verb|pdflatex|.
-
 
 \noindent Classes that auto-load \pkg{natbib} (e.g., \pkg{revtex4-2},
 \pkg{aastex631}) require no explicit \verb|\usepackage{natbib}|.
 Loading \pkg{citemsp} before either backend produces a package error.
+
+\subsection{Compiling}
+
+The simplest approach is \verb|latexmk -pdf <file>.tex|, which
+auto-detects whether to run \pkg{biber} or \pkg{bibtex} and executes as
+many passes as needed.  For manual compilation:
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{tabular*}{\dimexpr\linewidth-0pt}{@{}l@{\extracolsep{\fill}}l@{}}
+\textbf{biblatex} & \verb|pdflatex| $\to$ \verb|biber| $\to$ \verb|pdflatex| $\to$ \verb|pdflatex| \\[3pt]
+\textbf{natbib}   & \verb|pdflatex| $\to$ \verb|bibtex| $\to$ \verb|pdflatex| $\to$ \verb|pdflatex|
+\end{tabular*}
+\end{tcolorbox}
+
+\noindent\textbf{Common pitfall:} \pkg{biblatex} with
+\texttt{backend=biber} requires \verb|biber|, not \verb|bibtex|.  Running
+\verb|bibtex| on a \pkg{biber}-based document will silently produce an
+empty bibliography, because the two programs use incompatible
+auxiliary-file formats.
 
 
 
@@ -364,7 +393,7 @@ a section superscript.
 
 \subsection{Prefix registry}
 
-All ten built-in prefixes are listed below. Note that no prefix defaults to \S\ (section) in the superscript slot and \P\ (paragraph) in the subscript slot. A prefix is a single letter at the start of a locator slot that selects a symbol:
+All ten built-in prefixes are listed below, in table 1. Note that no prefix defaults to \S\ (section) in the superscript slot and \P\ (paragraph) in the subscript slot. A prefix is a single letter at the start of a locator slot that selects a symbol:
 
 \begin{table}[h]
 \centering
@@ -413,12 +442,16 @@ The prefix letter must not collide with an existing built-in prefix.
 
 \subsection{Configuration}
 
-Two user-configurable parameters control the locator appearance:
+Three user-configurable parameters control the citation appearance:
 \begin{itemize}[leftmargin=2em]
   \item \cmd{citemspscale} (default~0.35) --- controls the locator glyph
     size via \cmd{scalebox} from \pkg{graphicx}.
   \item \cmd{citemspraiseoffset} (default~1.5pt) --- vertical offset
     applied via \cmd{raisebox} to superscript locators.
+  \item \cmd{citemspfixedfonttrue} --- when enabled, the entire
+    \cmd{citemsp} output is set in \cmd{textnormal} (upright, medium
+    weight, default family) regardless of the surrounding font context.
+    Disabled by default, meaning citations inherit the surrounding font.
 \end{itemize}
 
 \noindent Redefine them after loading:
@@ -427,6 +460,7 @@ Two user-configurable parameters control the locator appearance:
 \begin{verbatim}
 \renewcommand{\citemspscale}{0.4}
 \renewcommand{\citemspraiseoffset}{2pt}
+\citemspfixedfonttrue              % citations always upright
 \end{verbatim}
 \end{tcolorbox}
 
@@ -464,12 +498,7 @@ $\rightarrow$ \citemsp{smith2003/3.2/5}
 \\[6pt]
 No built-in typed locator syntax; user must type symbols manually
 &
-Ten built-in prefixes; extensible via \cmd{citemspprefix}
-\\[6pt]
-Range compression via \texttt{numeric-comp}
-&
-Plain entries (no~\texttt{/}) compressed via the backend's native
-\cmd{cite}, so compression works identically
+Built-in prefixes; extensible via \cmd{citemspprefix}
 \\
 \bottomrule
 \end{tabular}
@@ -477,42 +506,6 @@ Plain entries (no~\texttt{/}) compressed via the backend's native
   \pkg{citemsp}.}
 \label{tab:comparison}
 \end{table}
-
-
-\subsection{Source-level comparison}
-
-The difference in source verbosity becomes clear when multiple locator-bearing
-citations appear together.  Consider six sources:
-
-\begin{tcolorbox}[colback=gray!5, colframe=gray!40, boxrule=0.5pt, arc=2pt,
-  top=6pt, bottom=6pt, left=10pt, right=10pt]
-\begin{verbatim}
-% Standard biblatex (6 sources, ~185 characters):
-\autocites[§3.2]{smith2003}[¶2]{meyerrochow2003}
-  [eq.\,6.55]{matthews1995}[§8.4, tab.\,2]{wang2020}
-  [§2.3]{ghirlanda2002}[§3]{zongker2006}
-
-% citemsp equivalent (6 sources, ~114 characters):
-\citemsp{smith2003/3.2, meyerrochow2003//2,
-  matthews1995/e6.55, wang2020/8.4/t2,
-  ghirlanda2002/2.3, zongker2006/3}
-\end{verbatim}
-\end{tcolorbox}
-
-\noindent\textbf{Rendered output:}
-
-\medskip
-\noindent
-\begin{tabular}{@{}lp{10cm}@{}}
-biblatex: & \autocites[§3.2]{smith2003}[¶2]{meyerrochow2003}[eq.\,6.55]{matthews1995}[§8.4, tab.\,2]{wang2020}[§2.3]{ghirlanda2002}[§3]{zongker2006} \\[4pt]
-citemsp:  & \citemsp{smith2003/3.2, meyerrochow2003//2, matthews1995/e6.55, wang2020/8.4/t2, ghirlanda2002/2.3, zongker2006/3}
-\end{tabular}
-
-\medskip
-\noindent At six entries the \pkg{biblatex} source is roughly 40\% longer, and
-the rendered bracket sequence occupies significant horizontal space.  The
-\pkg{citemsp} output remains a single compact bracket with superscript/subscript
-annotations.
 
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -535,7 +528,7 @@ parachutes~\citemsp{smith2003/6.1/2} remains a gap in evidence-based
 medicine.
 
 
-\subsection{Section-only locator}
+\subsection{Superscript-only locator}
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
@@ -583,6 +576,23 @@ medical, and ornithological perspectives.
 block~\citemsp{upper1974, smith2003/4, meyerrochow2003/1/2} has been
 studied from behavioural, medical, and ornithological perspectives.
 
+\subsection{Plain citation as drop-in replacement}
+
+Without slashes, \cmd{citemsp} behaves identically to \cmd{cite}:
+
+\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
+  top=6pt, bottom=6pt, left=10pt, right=10pt]
+\begin{verbatim}
+Elephant dung turns out to be useful
+habitat~\citemsp{camposarceiz2009}, which is more than can be
+said for most conference proceedings.
+\end{verbatim}
+\end{tcolorbox}
+
+\noindent\textbf{Output:} Elephant dung turns out to be useful
+habitat~\citemsp{camposarceiz2009}, which is more than can be said for most
+conference proceedings.
+
 
 \subsection{Range compression}
 
@@ -599,13 +609,12 @@ combinations.
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
 \begin{verbatim}
-\citemsp{upper1974, pennycook2015, smith2003, meyerrochow2003,
-  wang2020}
+\citemsp{smith2003, wang2020, meyerrochow2003, upper1974, pennycook2015}
 \end{verbatim}
 \end{tcolorbox}
 
 \noindent\textbf{Output:}
-\citemsp{upper1974, pennycook2015, smith2003, meyerrochow2003, wang2020}
+\citemsp{smith2003, wang2020, meyerrochow2003, upper1974, pennycook2015}
 
 \medskip
 \noindent\textbf{2.\enspace Plain entries mixed with locator entries:}
@@ -613,13 +622,12 @@ combinations.
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
 \begin{verbatim}
-\citemsp{upper1974, pennycook2015, smith2003/4.1,
-  meyerrochow2003, wang2020}
+\citemsp{upper1974, smith2003/4.1, smith2003, meyerrochow2003, wang2020}
 \end{verbatim}
 \end{tcolorbox}
 
 \noindent\textbf{Output:}
-\citemsp{upper1974, pennycook2015, smith2003/4.1, meyerrochow2003, wang2020}
+\citemsp{upper1974, smith2003/4.1, smith2003, meyerrochow2003, wang2020}
 
 \smallskip\noindent
 The plain entries compress into a range while the locator entry renders
@@ -748,24 +756,6 @@ yap2022/p170} for parachutes, toast, graphene, and dead spiders
 respectively.
 
 
-\subsection{Plain citation as drop-in replacement}
-
-Without slashes, \cmd{citemsp} behaves identically to \cmd{cite}:
-
-\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
-  top=6pt, bottom=6pt, left=10pt, right=10pt]
-\begin{verbatim}
-Elephant dung turns out to be useful
-habitat~\citemsp{camposarceiz2009}, which is more than can be
-said for most conference proceedings.
-\end{verbatim}
-\end{tcolorbox}
-
-\noindent\textbf{Output:} Elephant dung turns out to be useful
-habitat~\citemsp{camposarceiz2009}, which is more than can be said for most
-conference proceedings.
-
-
 \subsection{Adjacent to inline math}
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
@@ -785,9 +775,12 @@ exceeds most expectations.
 \subsection{Font contexts}
 
 The package works correctly in all standard \LaTeX\ font contexts.
+By default, citations inherit the surrounding font shape and weight.
 For italic and slanted shapes, a small kern is automatically inserted to
 prevent the locator from colliding with the slanted closing bracket.
-Bold, bold-italic, small caps, and upright text work without modification.
+
+\medskip
+\noindent\textbf{Default behaviour} (citations inherit surrounding font):
 
 \begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
   top=6pt, bottom=6pt, left=10pt, right=10pt]
@@ -801,6 +794,8 @@ Upright:~\citemsp{smith2003/6.1/2}\\[3pt]
   --- \emph{nested emph (upright):~\citemsp{smith2003/6.1/2}}}
 \end{tcolorbox}
 
+\noindent To force citations into upright, medium-weight, default-family text regardless of context, enable fixed-font mode with \verb|\citemspfixedfonttrue| in the preamble.  When active, the entire \cmd{citemsp} output is wrapped in \cmd{textnormal}, so an example \textit{italic}~\begingroup\citemspfixedfonttrue\citemsp{smith2003/6.1/2}\endgroup\ and \textbf{bold}~\begingroup\citemspfixedfonttrue\citemsp{smith2003/6.1/2}\endgroup\ contexts both produce the same upright citation.
+
 
 \subsection{Font sizes}
 
@@ -812,30 +807,6 @@ Locator glyphs scale proportionally at different font sizes:
 {\normalsize Normal:~\citemsp{ghirlanda2002/2.3/e2.5}}\\
 {\large Large:~\citemsp{ghirlanda2002/2.3/e2.5}}
 \end{tcolorbox}
-
-
-\subsection{Custom prefixes}
-
-Place \cmd{citemspprefix} in the preamble, after loading \pkg{citemsp}:
-
-\citemspprefix{w}{w.}%
-\citemspprefix{H}{Hyp.}%
-\begin{tcolorbox}[colback=blue!3, colframe=blue!30, boxrule=0.5pt, arc=2pt,
-  top=6pt, bottom=6pt, left=10pt, right=10pt]
-\begin{verbatim}
-% in the preamble:
-\citemspprefix{w}{w.}       % "w" renders as "w."
-\citemspprefix{H}{Hyp.}     % "H" renders as "Hyp."
-
-% in the document body:
-\citemsp{zongker2006/3/w5}
-\citemsp{cox1979/12.4/H2}
-\end{verbatim}
-\end{tcolorbox}
-
-\noindent\textbf{Output:}
-\citemsp{zongker2006/3/w5},\enspace
-\citemsp{cox1979/12.4/H2}
 
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -947,8 +918,6 @@ entries.
 % ══════════════════════════════════════════════════════════════════════════════
 
 \begin{itemize}[leftmargin=2em]
-  \item \textbf{Numeric styles only.}  \pkg{citemsp} attaches locators to numeric citation labels. Other non-numeric styles are currently not supported.
-  \item \textbf{Manual paragraph counting.}  Paragraph locators refer to paragraph numbers counted manually from the start of the referenced section.  There is no automatic cross-referencing.
   \item \textbf{\texttt{revtex4-2} with biblatex.}  The combination of \texttt{revtex4-2} and \pkg{biblatex} is incompatible due to conflicts in \verb|\addtocontents| patching between the two packages.  Although not a \pkg{citemsp} issue, users should keep that in mind. Make sure to use the natbib backend with revtex.
 \end{itemize}
 
@@ -961,36 +930,10 @@ entries.
   \item \textbf{Section numbering:} use the source's native format
     (e.g., 3.2.1, IV, A.1).
   \item \textbf{Paragraph counting:} count paragraphs from the start of
-    the referenced section.  This is a manual convention; \pkg{citemsp}
-    does not verify paragraph numbers against the cited source.
+    the referenced section; as a manual convention.
 
-    \emph{Note:} Paragraph locators rely on manual counting from the
-    start of the referenced section.  Since paragraphs are not explicitly
-    numbered in published sources, these locators may be ambiguous across
-    editions or between readers.  When using \P\ locators, consider
-    providing additional context in the surrounding text so the reader
-    can locate the passage independently.
-  \item \textbf{Subsection references:} use the full path
-    (e.g., \texttt{key/3.2.1}), not a relative number.
-  \item \textbf{Plain citations:} \verb|\citemsp{key}| with no slashes
-    produces a standard numeric citation, so the command can serve as a
-    drop-in replacement for \cmd{cite} if desired.
-\end{itemize}
-
-
-% ══════════════════════════════════════════════════════════════════════════════
-\section{Requirements}
-% ══════════════════════════════════════════════════════════════════════════════
-
-\begin{itemize}[leftmargin=2em]
-  \item \LaTeX2e\ (2020/10/01 or later)
-  \item \pkg{biblatex} (any numeric style) \textbf{or} \pkg{natbib}
-    (with the \texttt{numbers} option)
-  \item \pkg{graphicx}
-  \item \pkg{etoolbox}
-  \item \pkg{amssymb} --- recommended for best glyph quality
-    ($\triangleq$, $\boxplus$).  If not loaded, \pkg{citemsp} provides
-    primitive fallback definitions.
+    \emph{Note:} Paragraph locators rely on manual counting from the start of the referenced section.  Since paragraphs are not explicitly numbered in published sources, these locators may be ambiguous across editions or between readers.  When using \P\ locators, consider providing additional context in the surrounding text so the reader can locate the passage independently.
+  \item \textbf{Subsection references:} use the full path (e.g., \texttt{key/3.2.1}).
 \end{itemize}
 
 
