@@ -17,9 +17,7 @@
 \ProvidesPackage{citemsp}[2026/07/22 v2.3 Per-key citation locators (biblatex or natbib)]
 
 % ── Backend detection ────────────────────────────────────────────────────────
-%  citemsp can sit on top of either biblatex or natbib.  Whichever is loaded
-%  first wins; if both are loaded (which itself would be an error), biblatex
-%  is preferred.
+%  citemsp can sit on top of either biblatex or natbib.  if both are loaded (which itself would be an error), biblatex is preferred.
 \newif\if@citemsp@biblatex
 \newif\if@citemsp@natbib
 \@ifpackageloaded{biblatex}
@@ -37,8 +35,7 @@
 \RequirePackage{etoolbox}   % \forcsvlist (biblatex pulls it; natbib does not)
 
 % Fallback definitions for symbols used in built-in prefixes.
-% If amssymb (or another math font such as stix, unicode-math, newtxmath)
-% is loaded by the user, its definitions take precedence via \providecommand.
+% If amssymb (or another math font such as stix, unicode-math, newtxmath) is loaded by the user, its definitions take precedence via \providecommand.
 % Loading amssymb is recommended for best glyph quality but not required.
 \AtBeginDocument{%
   \providecommand{\square}{\vrule height 6pt width 6pt depth -.2pt\relax}%
@@ -52,8 +49,7 @@
 \newcommand{\citemspsize}[1]{\scalebox{\citemspscale}{#1}}
 
 % ── Fixed-font option ────────────────────────────────────────────────────────
-%  When true, \citemsp output is set in \textnormal (upright, medium weight,
-%  default family) regardless of the surrounding font context.
+%  When true, \citemsp output is set in \textnormal (upright, medium weight, default family) regardless of the surrounding font context.
 %  Enable with \citemspfixedfonttrue after loading.
 \newif\ifcitemspfixedfont
 \citemspfixedfontfalse
@@ -155,8 +151,7 @@
 }
 
 % ── Backend-specific cite command ────────────────────────────────────────────
-%  \citelinksp{<single-key>} prints the citation number (linked) followed by
-%  the locator super/subscripts.  The list-and-bracket handling lives in
+%  \citelinksp{<single-key>} prints the citation number (linked) followed by the locator super/subscripts. The list-and-bracket handling lives in
 %  \citemsp below; here we only handle one key.
 \if@citemsp@biblatex
   \DeclareCiteCommand{\citelinksp}
@@ -174,12 +169,10 @@
 % ── User command ──────────────────────────────────────────────────────────────
 %   \citemsp{key1/sec/par, key2/sec, key3}
 %   Each entry: key  |  key/loc1  |  key/loc1/loc2
-%   No prefix → §/¶;  letter prefix → see registry above
+%   No prefix, default to  §/¶;  letter prefix, then see registry above
 %
-%   Plain entries (no /) are batched and emitted via the backend's own \cite
-%   so that numeric-comp / sort&compress range compression works naturally.
-%   Locator entries are emitted individually.  The output interleaves
-%   compressed plain runs and locator entries in their original order.
+%   Plain entries (no /) are batched and emitted via the backend's own \cite so that numeric-comp / sort&compress range compression works naturally.
+%   Locator entries are emitted individually. The output interleaves compressed plain runs and locator entries in their original order.
 
 % Accumulator for a run of consecutive plain keys
 \def\@citemsp@plainrun{}
@@ -245,8 +238,7 @@
 
 % ── Compression-aware bare-number cite ────────────────────────────────────────
 %  \@citemsp@citebare{key1,key2,...} prints the backend's native \cite output
-%  with brackets suppressed, so range compression (numeric-comp / sort&compress)
-%  works exactly as it would for \cite.
+%  with brackets suppressed, so range compression (numeric-comp / sort&compress) works exactly as it would for \cite.
 \if@citemsp@biblatex
   \newcommand{\@citemsp@citebare}[1]{%
     \begingroup
