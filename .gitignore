@@ -23,7 +23,7 @@ citemsp.zip
 citemsp-*-tds.zip
 
 # Synced .sty copies (canonical source is root citemsp.sty)
-CTAN/citemsp.sty
+ctan/citemsp.sty
 
 # Local development (not shipped)
 sandbox/

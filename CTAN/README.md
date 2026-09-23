@@ -71,20 +71,28 @@ Copy `citemsp.sty` into the same directory as your `.tex` file.
 ### System-wide
 
 ```bash
-mkdir -p ~/texmf/tex/latex/citemsp
-cp citemsp.sty ~/texmf/tex/latex/citemsp/
-texhash ~/texmf
+TEXMFHOME=$(kpsewhich -var-value=TEXMFHOME)
+mkdir -p "$TEXMFHOME/tex/latex/citemsp"
+cp citemsp.sty "$TEXMFHOME/tex/latex/citemsp/"
+texhash "$TEXMFHOME"
 ```
+
+This works on Linux, macOS, and Windows (TeX Live).
 
 ## Configuration
 
-Adjust the locator glyph size and vertical offset after loading:
+Adjust the locator glyph size, vertical offset, and font behaviour after loading:
 
 ```latex
 \usepackage{citemsp}
 \renewcommand{\citemspscale}{0.4}           % default is 0.35
 \renewcommand{\citemspraiseoffset}{2pt}     % default is 1.5pt
+\citemspfixedfonttrue                       % citations always upright
 ```
+
+By default, citations inherit the surrounding font (italic, bold, etc.).
+Enable `\citemspfixedfonttrue` to force all citations into upright,
+medium-weight, default-family text regardless of context.
 
 ## Requirements
 
@@ -101,3 +109,4 @@ LaTeX Project Public License, version 1.3c or later.
 
 - Apostolos Tsampodimos -- [apostolos.tsampodimos@ftmc.lt](mailto:apostolos.tsampodimos@ftmc.lt)
 - Nathaniel Sherrill
+- Agnese Mariotti
