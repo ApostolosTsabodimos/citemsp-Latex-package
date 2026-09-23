@@ -1,8 +1,6 @@
 # citemsp — Per-key Citation Locators for LaTeX
 
-A LaTeX package that attaches section, paragraph, and other locators
-directly to numeric citation labels as compact superscript/subscript
-pairs. Works on top of either `biblatex` or `natbib`.
+`citemsp` is a LaTeX package that adds precise locators directly to numeric citation labels. It works on top of either `biblatex` or `natbib`.
 
 ## Quick start
 
